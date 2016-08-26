@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thmeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="layout/default">
+	  
+<head lang = "pl">
+</head>
+
+<body>
+	<div class="row" layout:fragment="content">
+		<h2 class ="indigo-text center" th:text="#{personalinformation}">Personal information</h2>
+		<form th:action="@{register}" th:object="${user}" method="post" class="col m8 s12 offset-m2">
+		<ul th:if="${#fields.hasErrors('*')}" class="errorlist">
+			<li th:each="err : ${#fields.errors('*')}" th:text="${err}">Bad data</li>
+		</ul>
+			<div class="row">
+				<div class="input-field col s6">
+					<input th:field="*{firstName}" id="firstName" type = "text" th:errorclass="invalid" />
+					<label for="firstName" th:text="#{firstname}">Your name</label>
+					<div th:errors="*{firstName}" class="red-text">Error</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input th:field="*{lastName}" id="lastName" type ="text" th:errorclass="invalid" />
+					<label for="lastName" th:text="#{lastname}">Your lastname</label>
+					<div th:errors="*{lastName}" class="red-text">Error</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input th:field="*{birthDate}" id="birthDate" type="text" th:placeholder="${dateFormat}" th:errorclass="invalid"/>
+                	<label for="birthDate" th:text="#{birthdate}">Your birthdate</label>
+                	<div th:errors="*{birthDate}"  class="red-text">Error</div>
+				</div>
+			</div>
+			<div class="row s12">
+				<button class="btn waves-effect waves-light" type="submit" name="register">
+					<i class="mdi-content-send right"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

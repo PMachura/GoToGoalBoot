@@ -1,0 +1,30 @@
+<div class="panel panel-default row" ng-controller="foodProductListCtrl" ng-hide="data.error">            
+    <div class="col-xs-3">
+        <a ng-click="selectCategory()" class="btn btn-block btn-default btn-lg">Strona Główna</a>
+        <a ng-repeat="item in data.foodProducts| orderBy:'category' | unique:'category'" 
+           ng-click="selectCategory(item)" class="btn btn-block btn-default btn-lg"
+           ng-class="getCategoryClass(item)">
+            {{item}}
+        </a>
+    </div>
+    <div class="col-xs-8">
+        <div class="well" ng-repeat="foodProduct in data.foodProducts| filter:categoryFilterFunction | range:selectedPage:pageSize">
+            <h5>
+                <strong>{{foodProduct.name}}</strong>
+                <span class="pull-right label label-primary">
+                    {{foodProduct.calories}} 
+                </span>
+            </h5>
+            <button ng-click="addProductToCart(foodProduct)" class="btn btn-success pull-right">
+                Dodaj do koszyka
+            </button>
+            <span class="lead">Opis</span>
+        </div>
+        <div class ="pull-right btn-group">
+            <a ng-repeat="page in data.foodProducts| filter:categoryFilterFunction | pageCount:pageSize"
+               ng-click="selectPage($index + 1)" class="btn btn-default" ng-class="getPageClass($index + 1)">
+                {{$index + 1}}
+            </a>
+        </div>
+    </div>
+</div>

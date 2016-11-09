@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thmeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+
+    <head>
+        <title>Home Page</title>
+    </head>
+    
+    <!-- to równie dobrz by mogło być w sekcji head bez <th:block layout:fragment="script><th:block> i też by dziłało -->
+    <th:block layout:fragment="script">
+        <script>
+            angular.module("goToGoal", ["customFilters", "cart", "ngRoute"])
+                    .config(function ($routeProvider) {
+                        $routeProvider.when("/complete", {
+                            templateUrl: "/templates/thankYou.html"
+                        });
+                        $routeProvider.when("/placeorder", {
+                            templateUrl: "/templates/placeOrder.html"
+                        });
+                        $routeProvider.when("/checkout", {
+                            templateUrl: "/templates/checkoutSummary.html"
+                        });
+                        $routeProvider.when("/products", {
+                            templateUrl: "/templates/foodProduct/foodProductList.html"
+                        });
+                        $routeProvider.otherwise({
+                            templateUrl: "/templates/foodProduct/foodProductList.html"
+                        });
+                    });
+        </script>
+        <script src="/angularjs/controllers/goToGoal.js"></script>
+        <script src="/angularjs/controllers/foodProductListController.js"></script>
+        <script src="/angularjs/controllers/checkoutController.js"></script>
+        <script src="/angularjs/filters/customFilters.js"></script>
+        <script src="/angularjs/components/cart/cart.js"></script>
+    </th:block>
+    
+    <body>
+        <div ng-app="goToGoal" ng-controller="goToGoalCtrl" class="row-fluid" layout:fragment="content">
+            <cart-summary/>
+            <div class="alert alert-danger" ng-show="data.error">
+                Błąd {{data.error.status}} {{data.error.message}} Produkty nie zostały wczytane
+                <a href="/" class="alert-link">Kliknij tutaj, by spróbować ponownie</a>
+            </div>
+            <ng-view />
+        </div>
+    </body>
+</html>
+

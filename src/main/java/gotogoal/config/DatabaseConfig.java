@@ -1,7 +1,10 @@
 package gotogoal.config;
 
-
+import java.sql.Date;
+import java.time.LocalDate;
 import javax.naming.NamingException;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -28,82 +31,72 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
-
-
 @Configuration
-@EnableJpaRepositories(basePackages="gotogoal.services")
+@EnableTransactionManagement
 public class DatabaseConfig {
-	
-	
-	  @Value("${db.driver}")
-	  private String DB_DRIVER;
-	  
-	  @Value("${db.password}")
-	  private String DB_PASSWORD;
-	  
-	  @Value("${db.url}")
-	  private String DB_URL;
-	  
-	  @Value("${db.username}")
-	  private String DB_USERNAME;
 
-	
-	  
-	  
-	  
-	 @Bean
-	  public BasicDataSource dataSource() {
-		 BasicDataSource dataSource = new BasicDataSource();
-	    dataSource.setDriverClassName(DB_DRIVER);
-	    dataSource.setUrl(DB_URL);
-	    dataSource.setUsername(DB_USERNAME);
-	    dataSource.setPassword(DB_PASSWORD);
-	    return dataSource;
-	  }
-	
+    @Value("${db.driver}")
+    private String DB_DRIVER;
 
-	  @Bean
-	  public LocalContainerEntityManagerFactoryBean entityManagerFactory(BasicDataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
-	    LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-	    emf.setDataSource(dataSource);
-	    emf.setPersistenceUnitName("gotogoal");
-	    emf.setJpaVendorAdapter(jpaVendorAdapter);
-	    emf.setPackagesToScan("gotogoal.model");
-	    return emf;
-	  }
-	
-	  
-	  @Bean
-	  public JpaVendorAdapter jpaVendorAdapter() {
-	    HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-	    adapter.setDatabase(Database.MYSQL);
-	    adapter.setShowSql(true);
-	    adapter.setGenerateDdl(true);  //to sprawia ze sie generuje automatycznie tabela w bazie dla entity
-	    adapter.setDatabasePlatform("org.hibernate.dialect.MySQL5Dialect");  //wazne przez to nie działało
-	    return adapter;
-	  }
-	
-	 
-	  @Bean
-	  public BeanPostProcessor persistenceTranslation(){
-		  return new PersistenceExceptionTranslationPostProcessor();
-	  }
-	  
-	  @Configuration
-	  @EnableTransactionManagement
-	  public static class TransactionConfig {
+    @Value("${db.password}")
+    private String DB_PASSWORD;
 
-	    @Autowired
-	    private EntityManagerFactory emf;
+    @Value("${db.url}")
+    private String DB_URL;
 
-	    @Bean
-	    public PlatformTransactionManager transactionManager() {
-	      JpaTransactionManager transactionManager = new JpaTransactionManager();
-	      transactionManager.setEntityManagerFactory(emf);
-	      return transactionManager;
-	    }    
-	  }
-	  
+    @Value("${db.username}")
+    private String DB_USERNAME;
+
+    
+
+    @Bean
+    public BasicDataSource dataSource() {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName(DB_DRIVER);
+        dataSource.setUrl(DB_URL);
+        dataSource.setUsername(DB_USERNAME);
+        dataSource.setPassword(DB_PASSWORD);
+        return dataSource;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(BasicDataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setDataSource(dataSource);
+        emf.setPersistenceUnitName("gotogoal");
+        emf.setJpaVendorAdapter(jpaVendorAdapter);
+        emf.setPackagesToScan("gotogoal.model");
+        return emf;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+        adapter.setDatabase(Database.MYSQL);
+        adapter.setShowSql(true);
+        adapter.setGenerateDdl(true);  //to sprawia ze sie generuje automatycznie tabela w bazie dla entity
+        adapter.setDatabasePlatform("org.hibernate.dialect.MySQL5Dialect");  //wazne przez to nie działało
+        return adapter;
+    }
+
+    @Bean
+    public BeanPostProcessor persistenceTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    @Configuration
+    @EnableTransactionManagement
+    public static class TransactionConfig {
+
+        @Autowired
+        private EntityManagerFactory emf;
+
+        @Bean
+        public PlatformTransactionManager transactionManager() {
+            JpaTransactionManager transactionManager = new JpaTransactionManager();
+            transactionManager.setEntityManagerFactory(emf);
+            return transactionManager;
+        }
+    }
+
 }
-
-

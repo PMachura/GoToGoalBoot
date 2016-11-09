@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thmeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+    <head>
+        <title>Angular Security</title>
+    </head>
+
+    <th:block layout:fragment="script">
+        <script src="/angularjs/security/securityModule.js"></script>
+    </th:block>
+
+    <body>
+        <div ng-app="securityModule" layout:fragment="content">
+            <div ng-controller="navigation" class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="active"><a href="#/">home</a></li>
+                    <li><a href="#/login">login</a></li>
+                    <li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
+                </ul>
+            </div>
+            <ng-view class="container"/>
+        </div>
+    </body>
+</html>
+

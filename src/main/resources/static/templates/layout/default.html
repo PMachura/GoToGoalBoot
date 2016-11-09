@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Domyślny tytuł</title>
+        <link th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" rel="stylesheet" media="screen,projection"/>
+        <!--   <link rel="stylesheet" href="webjars/bootstrap-material-design/0.3.0/css/material.css"/> -->
+        <link rel="stylesheet" href="webjars/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css"/>
+        <link rel="stylesheet" href="webjars/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker3.css"/>
+
+        <link type="text/css" href="css/index.css" rel="stylesheet" />
+
+
+
+        <script src="/webjars/jquery/2.1.4/jquery.js"></script>  
+        <script src="/webjars/angularjs/1.5.8/angular.js"></script>
+        <script src="/webjars/angularjs/1.5.8/angular-resource.js"></script>
+        <script src="/webjars/angularjs/1.5.8/angular-route.js"></script>
+        <script src="/webjars/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js"></script>
+
+       
+
+    <th:block layout:fragment="script"></th:block>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"></a>
+                <img th:src="@{/images/logo.png}"/>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Page 1</a></li>
+                <li><a href="#">Page 2</a></li>
+                <li><a href="#">Page 3</a></li>
+                <li>
+                    <form  th:action="@{/logout}" method="post" style="display: inline-block">
+                        <input class="btn-flat" type="submit" value="Wyloguj"/>
+                    </form> 
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Jeżeli na jakiejś stronie ustawimy, że ten plik jest dokratorem, to:
+    *wszystko co jest na stronie dekorowanej w sekcji <head></head> jest dołączane zawsze
+    *wszystko co jest na stronie dekorowanej w sekcji <body></body> jest ignorowane, chyba że znajdzie się w <section layout:fragment="content"></section>
+    lub w innym dowolnym <layout:fragment></>
+    *jeżeli na stronie dekorowanej brakuje <section layout:fragment="content"></section> to wtedy umieszczana jest wartość domyślna ze strony będącej dekoratoreM
+    -->
+    <section layout:fragment="content">
+        <p>Domyślna zawartość strony</p>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thmeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+
+    <head>
+        <title>Angualar Rest</title>
+    </head>
+
+    <!-- to równie dobrz by mogło być w sekcji head bez <th:block layout:fragment="script><th:block> i też by dziłało -->
+    <th:block layout:fragment="script">
+        <script src="/angularjs/rest/macronutrientsCalculator.js"></script>
+        <script src="/angularjs/rest/rest.js"></script>
+    </th:block>
+
+    <body>
+        <div ng-app="restModule" ng-controller="restController" class="row-fluid" layout:fragment="content">
+            <div class="row-fluid">
+                <button type="button" ng-click="getNutritionDays()" class="btn-primary pull-left">
+                    <span class="glyphicon glyphicon-plus "></span>POBIERZ DNI
+                </button>
+                <button type="button" ng-click="calculateMacronutrients(foodProducts[0], 20)" class="btn-primary pull-left">
+                    <span class="glyphicon glyphicon-plus "></span>Oblicz kalorie
+                </button>
+                <button type="button" ng-click="changeProteins(foodProducts[0], 40)" class="btn-primary pull-left">
+                    <span class="glyphicon glyphicon-plus "></span>Zmien białko
+                </button>
+                <br/>
+                <input type ="text" ng-model="foodProducts[0].proteins" ng-change="calculateMacronutrients(foodProducts[0], 20)"/>
+                <br/>
+                <br/>
+                <br/>
+                macronutrients {{test.macronutrients}}
+                <br/>
+                <br/>
+                <br/>
+                PRODUKTY {{foodProducts}}              
+                <br/>
+                <br/>
+                <br/>
+                {{test2}}
+                <br/>
+                <br/>
+                <br/>
+                {{test}}
+                <br/>
+                <br/>
+                <br/>
+                {{foodProducts}}
+                <br/>
+                <br/>
+                <br/>
+                {{nutritionDays}}
+                <br/>
+                <br/>
+                <br/>
+                AAAAAAs
+                {{nutritionDays.content[0].nutritionUnits[0].nutritionUnitsFoodProducts}}
+                <br/>
+                {{nutritionUnits}}
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3>Dzienniki żywieniowe
+                                <button type="button" class="btn-primary pull-right">
+                                    <span class="glyphicon glyphicon-plus "></span> 
+                                </button>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-secondary" type="button"> 
+                                        <span class="glyphicon glyphicon-search "></span> 
+                                    </button>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Data"/>
+                            </div>
+                            <hr/>
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="nutritionDay in nutritionDays.content">
+                                    {{nutritionDay.date}}
+                                    {{nutritionDay.id}}
+                                    <button type="button" ng-click="getNutritionUnits(nutritionDay.id)" class="btn btn-primary pull-right">
+                                        <span class="glyphicon glyphicon-search"></span> 
+                                    </button>
+                                    <button type="button" class="btn btn-primary pull-right">
+                                        <span class="glyphicon glyphicon-pencil"></span> 
+                                    </button>
+                                    <button type="button" class="btn btn-primary pull-right">
+                                        <span class="glyphicon glyphicon-trash"></span> 
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4" ng-hide="false">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3>Dodaj produkt żywnościowy
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group row">
+                                <label class="col-md-3 control-label">Nazwa</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.name" placeholder="Nazwa"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 control-label">Kategoria</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.category" placeholder="Kategoria"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 control-label">Kalorie</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.calories" placeholder="Kalorie"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 control-label">Białka</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.proteins" placeholder="Białka"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 control-label">Węglowodany</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.carbohydrates" placeholder="Węglowodany"/>
+                                </div>
+                            </div>
+                            <div class="form-group row" >
+                                <label class="col-md-3 control-label">Tłuszcze</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="focusedInput" type="text" ng-model="foodProductTest.fats" placeholder="Tłuszcze"/>
+                                </div>
+                            </div>
+                            <div class="form-group row" >
+                                <label class="col-md-3 control-label">Dodatkowe pole</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="additiona" type="text" ng-model="foodProductTest.additional" placeholder="Dodatkowe"/>
+                                </div>
+                            </div>
+                            Testowy produkt: {{foodProductTest}}
+                            <br/>
+                            Utworzoney produkt: {{created}}
+                            <br/>
+                            <button class="btn btn-default" ng-click="saveTestFoodProduct()">Zapisz produkt testowy</button>
+                            <br/>
+                            <button class="btn btn-default" ng-click="updateExistedProduct()">Update już istniejącego produktu</button>
+                            <br/>
+                            <button class="btn btn-default" ng-click="createProduct()">Stwórz nowy produkt </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nazwa</th>
+                                <th>Kategoria</th>
+                                <th>Gramy</th>
+                                <th>Kalorie</th>
+                                <th>Białka</th>
+                                <th>Węglowodany</th>
+                                <th>Tłuszcze</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="nutritionUnitsFoodProducts in nutritionDays.content[0].nutritionUnits[0].foodProducts">
+                                <td>{{nutritionUnitsFoodProducts.id}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>
+

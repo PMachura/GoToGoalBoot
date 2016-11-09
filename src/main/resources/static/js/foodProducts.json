@@ -1,0 +1,18 @@
+{
+    "products":
+            [{
+                    "name": "rice",
+                    "calories": "300",
+                    "eaten": false
+                },
+                {
+                    "name": "chicken",
+                    "calories": "100",
+                    "eaten": false
+                },
+                {
+                    "name": "coconut oil",
+                    "calories": "900",
+                    "eaten": false
+                }]
+}

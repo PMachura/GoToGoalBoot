@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<style>
+    .navbar-right {float: right !important; margin-right: 5px;}     
+    .navbar-text {margin-right: 10px;}
+</style>
+<div class="navbar-right">
+    <div class="navbar-text">
+        <b>Koszyk</b>
+        {{total()}} ** {{itemCount()}}
+    </div>
+    <a href="#/checkout" class="btn btn-default navbar-btn">Do kasy</a>                 
+</div>

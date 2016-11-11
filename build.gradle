@@ -66,6 +66,7 @@ dependencies {
     compile 'org.webjars:materializecss:0.96.0'
     compile 'org.webjars:jquery:2.1.4'
     compile 'org.webjars:angularjs:1.5.8'
+    compile group: 'org.webjars', name: 'angular-ui-select', version: '0.19.6'
     compile group: 'org.webjars', name: 'bootstrap', version: '3.3.7'
     compile group: 'org.webjars', name: 'bootstrap-material-design', version: '0.3.0'
     compile group: 'org.webjars', name: 'bootstrap-datepicker', version: '1.6.1'

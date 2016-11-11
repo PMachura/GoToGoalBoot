@@ -44,7 +44,7 @@ class NutritionUnitForDailyNutritionSerializer extends JsonSerializer<List<Nutri
         for (NutritionUnit nutritionUnit : value) {
             gen.writeStartObject();
             gen.writeNumberField("id", nutritionUnit.getId());
-            gen.writeObjectField("dateTime", nutritionUnit.getLocalDateTime());
+            gen.writeObjectField("time", nutritionUnit.getTime());
             gen.writeEndObject();
         }
         gen.writeEndArray();

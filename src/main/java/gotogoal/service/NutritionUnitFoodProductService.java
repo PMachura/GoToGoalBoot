@@ -37,4 +37,8 @@ public class NutritionUnitFoodProductService {
     public NutritionUnitFoodProduct findOne(Long id){
         return nutritionUnitFoodProductRepository.findOne(id);
     }
+    
+    public void delete(Long id){
+        nutritionUnitFoodProductRepository.delete(id);
+    }
 }

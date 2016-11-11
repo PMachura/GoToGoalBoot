@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 // OPCJE - ZMIENIĆ transformRequest ale to jest słabe to trzeba zmieniać wszystko ;p  | ZROBIĆ TAK BY KONKRETNE FOOD PRODUCTY BEZ LINKÓW BYŁY RÓWNIEŻ RESOURCAMI
-angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule"])
+angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "ui.select", "ngSanitize"])
         .constant("userEmail", "p@p")
         .constant("userId", "1")
         .constant("resourceUrlPrefix", "http://localhost:8080/api")
@@ -55,8 +55,16 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule"])
                     }
                 }
             };
-      
+
             //**************************************************************************************************
+
+            //*********************** NUTRITIONUNITFOODPRODUCTS *********************************************//
+            $scope.eatenFoodProducts = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date/nutritionUnits/:nutritionUnitId/nutritionUnitsFoodProducts/:id",
+                    {email: userEmail, id: "@id"});
+
+            $scope.deleteEatenFoodProduct = function (eatenFoodProduct, params) {
+                $scope.eatenFoodProducts.delete(params, eatenFoodProduct)
+            }
 
             //*********************** NUTRITION UNIT ****************************//
             $scope.nutritionUnitResource = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date/nutritionUnits/:id",
@@ -65,17 +73,17 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule"])
                 $scope.nutritionUnitResource.query({date: nutritionDay.date}, function (data) {
                     var nutritionUnits = mapToResource(data, $scope.nutritionUnitResource);
                     for (var i = 0; i < nutritionUnits.length; i++) {
-
-                        for (var j = 0; j < nutritionUnits[i].foodProducts.length; j++) {
-                            var grams = nutritionUnits[i].foodProducts[j].grams;
-                            var foodProduct = $scope.findFoodProductById(nutritionUnits[i].foodProducts[j].id);
-                            nutritionUnits[i].foodProducts[j].macronutrients = $scope.calculateMacronutrients(foodProduct, grams);
+                        for (var j = 0; j < nutritionUnits[i].eatenFoodProducts.length; j++) {
+                            var grams = nutritionUnits[i].eatenFoodProducts[j].grams;
+                            var foodProduct = $scope.findFoodProductById(nutritionUnits[i].eatenFoodProducts[j].id);
+                            nutritionUnits[i].eatenFoodProducts[j].macronutrients = macronutrientsCalculator.calculateMacronutrients(foodProduct, grams);
                         }
                     }
                     nutritionDay.nutritionUnits = nutritionUnits;
                 });
             };
             //*********************** NUTRITION DAY ****************************//
+
             $scope.nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date", {email: userEmail, date: "@date"}, {
                 query: {
                     isArray: false
@@ -97,20 +105,52 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule"])
             //**********************************************************************//
 
             // ********************** CALCULATION PERFORMANCE AND TESTS *********************//
+            $scope.test = {};
+            $scope.test.returnedValue = 5;
+
+            $scope.editedNutritionUnit = {};
+
             $scope.getFoodProducts();
             $scope.getNutritionDays();
 
-            $scope.test = {};
-            $scope.test.input = 20;
-            $scope.test.macronutrients = $scope.test.input * 2;
-            $scope.calculateMacronutrients = function (foodProduct, grams) {
-                $scope.test.macronutrients = macronutrientsCalculator.calculateMacronutrients(foodProduct, grams);
-            }
 
-
-            $scope.changeProteins = function (foodProduct, grams) {
-                foodProduct.proteins = grams;
+            $scope.addFoodProductToNutritionUnit = function (foodProduct, nutritionUnit, grams) {
+                if (angular.isObject(foodProduct) && angular.isObject(nutritionUnit)) {
+                    var eatenFoodProduct = {};
+                    eatenFoodProduct.id = foodProduct.id;
+                    eatenFoodProduct.name = foodProduct.name;
+                    eatenFoodProduct.category = foodProduct.category;
+                    angular.isNumber(grams) ? eatenFoodProduct.grams = grams : eatenFoodProduct.grams = 100;                   
+                    eatenFoodProduct.macronutrients = macronutrientsCalculator.calculateMacronutrients(foodProduct, eatenFoodProduct.grams);
+                    nutritionUnit.eatenFoodProducts.push(eatenFoodProduct);
+                    nutritionUnit.macronutrients = macronutrientsCalculator.sumMacronutrientsForNutritionUnit(nutritionUnit);
+                }
             };
+
+            $scope.getNutritionUnitToEdit = function () {
+
+                $scope.editedNutritionUnit.eatenFoodProductsToDelete = [];
+                $scope.editedNutritionUnit.content = angular.copy($scope.nutritionDays.content[0].nutritionUnits[0]);
+                $scope.editedNutritionUnit.content.macronutrients = macronutrientsCalculator.sumMacronutrientsForNutritionUnit($scope.editedNutritionUnit.content);
+            };
+            $scope.updateEatenFoodProduct = function (eatenFoodProduct) {
+                eatenFoodProduct.macronutrients = macronutrientsCalculator.updateMacronutrients($scope.findFoodProductById(eatenFoodProduct.id), eatenFoodProduct.grams, eatenFoodProduct.macronutrients);
+                $scope.editedNutritionUnit.content.macronutrients = macronutrientsCalculator.sumMacronutrientsForNutritionUnit($scope.editedNutritionUnit.content);
+            };
+
+            $scope.deleteEatedFoodProductFromEditedNutritionUnit = function (eatenFoodProduct) {
+                $scope.editedNutritionUnit.eatenFoodProductsToDelete.push(eatenFoodProduct);
+                $scope.editedNutritionUnit.content.eatenFoodProducts.splice($scope.editedNutritionUnit.content.eatenFoodProducts.indexOf(eatenFoodProduct), 1);
+                $scope.editedNutritionUnit.content.macronutrients = macronutrientsCalculator.sumMacronutrientsForNutritionUnit($scope.editedNutritionUnit.content);
+
+            };
+            
+            $scope.saveEditedNutritionUnit = function(nutritionUnit){
+                delete nutritionUnit.nutritionDay.user;
+                nutritionUnit.$save();
+            };
+
+
 
 
         });

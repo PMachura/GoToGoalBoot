@@ -8,6 +8,7 @@ package gotogoal.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gotogoal.config.LocalDateAttributeConverter;
 import gotogoal.config.LocalDateTimeAttributeConverter;
+import gotogoal.config.LocalTimeAttributeConverter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -32,8 +33,8 @@ public class NutritionUnit {
     private Long id;
 
     @NotNull
-    @Convert(converter = LocalDateTimeAttributeConverter.class)
-    private LocalDateTime localDateTime;
+    @Convert(converter = LocalTimeAttributeConverter.class)
+    private LocalTime time;
 
     @ManyToOne
     private NutritionDay nutritionDay;
@@ -41,13 +42,12 @@ public class NutritionUnit {
     @OneToMany(mappedBy = "nutritionUnit")
     private List<NutritionUnitFoodProduct> nutritionUnitsFoodProducts;
 
-
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalTime getTime() {
+        return time;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setTime(LocalTime localTime) {
+        this.time = localTime;
     }
 
     public NutritionDay getNutritionDay() {

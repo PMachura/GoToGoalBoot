@@ -11,6 +11,7 @@ import gotogoal.rest.resource.NutritionUnitResource;
 import gotogoal.rest.resource.assembler.NutritionUnitResourceAssembler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -137,8 +138,8 @@ public class NutritionUnitService {
         return page;
     }
 
-    public Collection<NutritionUnit> testDateTime(LocalDateTime localDateTime) {
-        Collection<NutritionUnit> collection = this.nutritionUnitRepository.findBylocalDateTimeGreaterThan(localDateTime);
+    public Collection<NutritionUnit> testDateTime(LocalTime localTime) {
+        Collection<NutritionUnit> collection = this.nutritionUnitRepository.findByTimeGreaterThan(localTime);
         collection.forEach((NutritionUnit nutritionUnit) -> {
             nutritionUnit.setNutritionUnitsFoodProducts(null);
         });

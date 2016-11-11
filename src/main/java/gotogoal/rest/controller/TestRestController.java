@@ -56,11 +56,11 @@ public class TestRestController {
         List<NutritionUnit> nutritionUnits = new ArrayList<NutritionUnit>();
        
         NutritionUnit nutritionUnit = new NutritionUnit();
-        nutritionUnit.setLocalDateTime(LocalDateTime.now());
+    //    nutritionUnit.setLocalDateTime(LocalDateTime.now());
         nutritionUnits.add(nutritionUnit);
         
         nutritionUnit = new NutritionUnit();
-        nutritionUnit.setLocalDateTime(LocalDateTime.now().plusDays(15));
+   //     nutritionUnit.setLocalDateTime(LocalDateTime.now().plusDays(15));
         nutritionUnits.add(nutritionUnit);
         
         nutritionDay.setNutritionUnits(nutritionUnits);
@@ -83,7 +83,7 @@ public class TestRestController {
     @RequestMapping(value = "nutritionUnit", method = RequestMethod.POST)
     public String createNutritionUnit(@RequestBody NutritionUnit nutritionUnit) {
        // NutritionUnit saved = nutritionUnitService.save(nutritionUnit);
-       System.out.println("DateTime " + nutritionUnit.getLocalDateTime());
+ ///     System.out.println("DateTime " + nutritionUnit.getLocalDateTime());
        System.out.println("Nutrition Unit id " + nutritionUnit.getNutritionDay().getId());
        for(NutritionUnitFoodProduct nufp : nutritionUnit.getNutritionUnitsFoodProducts()){
            System.out.println("grams " + nufp.getGrams());
@@ -96,7 +96,7 @@ public class TestRestController {
     @RequestMapping(value = "nutritionUnit2", method = RequestMethod.POST)
     public NutritionUnit createNutritionUnit2(@RequestBody NutritionUnit nutritionUnit) {
        // NutritionUnit saved = nutritionUnitService.save(nutritionUnit);
-       System.out.println("DateTime " + nutritionUnit.getLocalDateTime());
+    //   System.out.println("DateTime " + nutritionUnit.getLocalDateTime());
        System.out.println("Nutrition Unit id " + nutritionUnit.getNutritionDay().getId());
        for(NutritionUnitFoodProduct nufp : nutritionUnit.getNutritionUnitsFoodProducts()){
            System.out.println("grams " + nufp.getGrams());

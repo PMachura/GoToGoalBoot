@@ -13,6 +13,7 @@ import gotogoal.rest.resource.assembler.NutritionUnitResourceAssembler;
 import gotogoal.service.NutritionUnitService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +50,21 @@ public class NutritionUnitRestController {
     @RequestMapping
     public ResponseEntity<List<NutritionUnitResource>> findAll(@PathVariable String userEmail, @PathVariable LocalDate nutritionDayDate){
         return new ResponseEntity(nutritionUnitService.findAllAsResourceEager(userEmail, nutritionDayDate),HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public ResponseEntity<NutritionUnit> update(@RequestBody NutritionUnit nutritionUnit){
+        NutritionUnit saved  = nutritionUnitService.save(nutritionUnit);
+        System.out.println("@@@@ DEBUG");
+        System.out.println("@@@@ ID " + nutritionUnit.getId());
+        System.out.println("@@@@ NutritionDayId " + nutritionUnit.getNutritionDay().getId());
+        System.out.println("@@@@ PETLA");
+        for(NutritionUnitFoodProduct nutritionUnitFoodProduct : nutritionUnit.getNutritionUnitsFoodProducts()){
+            System.out.println("@@@@ Gramy " + nutritionUnitFoodProduct.getGrams());
+            System.out.println("@@@@ FoodProductId " + nutritionUnitFoodProduct.getFoodProduct().getId());
+            System.out.println("@@@@ End NUFP");
+        }
+        return new ResponseEntity<NutritionUnit>(saved, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping("/foodProducts")
@@ -75,7 +92,7 @@ public class NutritionUnitRestController {
     
     @RequestMapping(value="/testDate")
     public Collection<NutritionUnit> getDate(){
-        return this.nutritionUnitService.testDateTime(LocalDateTime.now());
+        return this.nutritionUnitService.testDateTime(LocalTime.now());
     }
 
 }

@@ -19,14 +19,14 @@ import javax.validation.constraints.Min;
  * @author Przemek
  */
 @Entity
-public class NutritionUnitFoodProduct {
+public class MealFoodProduct {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    private NutritionUnit nutritionUnit;
+    private Meal meal;
     
     @ManyToOne
     private FoodProduct foodProduct;
@@ -42,12 +42,12 @@ public class NutritionUnitFoodProduct {
         this.id = id;
     }
 
-    public NutritionUnit getNutritionUnit() {
-        return nutritionUnit;
+    public Meal getMeal() {
+        return meal;
     }
 
-    public void setNutritionUnit(NutritionUnit nutritionUnit) {
-        this.nutritionUnit = nutritionUnit;
+    public void setMeal(Meal meal) {
+        this.meal = meal;
     }
 
     public FoodProduct getFoodProduct() {

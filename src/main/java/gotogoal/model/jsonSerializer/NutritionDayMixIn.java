@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import gotogoal.model.User;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,15 +36,15 @@ class UserAsEmailSerializer extends JsonSerializer<User> {
     }
 }
 
-class NutritionUnitForDailyNutritionSerializer extends JsonSerializer<List<NutritionUnit>> {
+class MealForDailyNutritionSerializer extends JsonSerializer<List<Meal>> {
 
     @Override
-    public void serialize(List<NutritionUnit> value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(List<Meal> value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
         gen.writeStartArray();
-        for (NutritionUnit nutritionUnit : value) {
+        for (Meal meal : value) {
             gen.writeStartObject();
-            gen.writeNumberField("id", nutritionUnit.getId());
-            gen.writeObjectField("time", nutritionUnit.getTime());
+            gen.writeNumberField("id", meal.getId());
+            gen.writeObjectField("time", meal.getTime());
             gen.writeEndObject();
         }
         gen.writeEndArray();
@@ -52,7 +52,7 @@ class NutritionUnitForDailyNutritionSerializer extends JsonSerializer<List<Nutri
 }
 
 
-@JsonPropertyOrder({"id", "date", "user", "nutritionUnits"})
+@JsonPropertyOrder({"id", "date", "user", "meals"})
 public abstract class NutritionDayMixIn extends NutritionDay {
 
     @Override
@@ -71,7 +71,7 @@ public abstract class NutritionDayMixIn extends NutritionDay {
 
     @Override
     @JsonInclude(Include.NON_NULL)
-    @JsonSerialize(using = NutritionUnitForDailyNutritionSerializer.class)
-    public abstract List<NutritionUnit> getNutritionUnits();
+    @JsonSerialize(using = MealForDailyNutritionSerializer.class)
+    public abstract List<Meal> getMeals();
 
 }

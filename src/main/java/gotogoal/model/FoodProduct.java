@@ -7,6 +7,7 @@ package gotogoal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -53,7 +54,7 @@ public class FoodProduct {
 
     @JsonIgnore
     @OneToMany(mappedBy = "foodProduct")
-    private List<NutritionUnitFoodProduct> nutritionUnitFoodProduct;
+    private List<MealFoodProduct> mealFoodProduct;
 
     public Long getId() {
         return id;
@@ -95,12 +96,12 @@ public class FoodProduct {
         this.fats = fats;
     }
 
-    public List<NutritionUnitFoodProduct> getNutritionUnitFoodProduct() {
-        return nutritionUnitFoodProduct;
+    public List<MealFoodProduct> getMealFoodProduct() {
+        return mealFoodProduct;
     }
 
-    public void setNutritionUnitFoodProduct(List<NutritionUnitFoodProduct> nutritionUnitFoodProduct) {
-        this.nutritionUnitFoodProduct = nutritionUnitFoodProduct;
+    public void setMealFoodProduct(List<MealFoodProduct> mealFoodProduct) {
+        this.mealFoodProduct = mealFoodProduct;
     }
 
     public String getName() {

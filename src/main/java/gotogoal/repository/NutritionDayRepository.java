@@ -6,7 +6,7 @@
 package gotogoal.repository;
 
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;

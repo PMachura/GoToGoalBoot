@@ -5,7 +5,7 @@
  */
 package gotogoal.repository;
 
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,11 +19,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Przemek
  */
-public interface NutritionUnitRepository extends JpaRepository<NutritionUnit, Long> {
+public interface MealRepository extends JpaRepository<Meal, Long> {
 
-    public Collection<NutritionUnit> findByNutritionDayId(Long nutritionDiaryId);
-    public Page<NutritionUnit> findByNutritionDayId(Long nutritionDiaryId, Pageable pageable);
-    public Collection<NutritionUnit> findByTimeGreaterThan(LocalTime localTime);
-    public Collection<NutritionUnit> findByNutritionDayUserEmailAndNutritionDayDate(String userEmail, LocalDate localDate);
+    public Collection<Meal> findByNutritionDayId(Long nutritionDiaryId);
+    public Page<Meal> findByNutritionDayId(Long nutritionDiaryId, Pageable pageable);
+    public Collection<Meal> findByTimeGreaterThan(LocalTime localTime);
+    public Collection<Meal> findByNutritionDayUserEmailAndNutritionDayDate(String userEmail, LocalDate localDate);
 
 }

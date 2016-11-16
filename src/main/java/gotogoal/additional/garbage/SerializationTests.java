@@ -6,9 +6,9 @@
 package gotogoal.additional.garbage;
 
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import gotogoal.service.NutritionDayService;
-import gotogoal.service.NutritionUnitService;
+import gotogoal.service.MealService;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SerializationTests {
 
     @Autowired
-    static NutritionDayService dailyNutritionService;
+    static NutritionDayService nutritionDayService;
     
     @Autowired
-    static NutritionUnitService nutritionUnitService;
+    static MealService mealService;
     
     
     

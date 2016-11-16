@@ -5,7 +5,7 @@
  */
 package gotogoal.rest.controller;
 
-import gotogoal.service.NutritionUnitFoodProductService;
+import gotogoal.service.MealFoodProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Przemek
  */
 @RestController
-@RequestMapping("/api/users/{userEmail}/nutritionDays/{nutritionDayDate}/nutritionUnits/{nutritionUnitId}/nutritionUnitsFoodProducts")
-public class NutritionUnitFoodProductRestController {
+@RequestMapping("/api/users/{userEmail}/nutritionDays/{nutritionDayDate}/meals/{mealId}/mealsFoodProducts")
+public class MealFoodProductRestController {
     
-    NutritionUnitFoodProductService nutritionUnitFoodProductService;
+    MealFoodProductService mealFoodProductService;
     
     @Autowired
-    public NutritionUnitFoodProductRestController(NutritionUnitFoodProductService nutritionUnitFoodProductService){
-      this.nutritionUnitFoodProductService = nutritionUnitFoodProductService;  
+    public MealFoodProductRestController(MealFoodProductService mealFoodProductService){
+      this.mealFoodProductService = mealFoodProductService;  
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity delete(@PathVariable Long id){
-        nutritionUnitFoodProductService.delete(id);
+        mealFoodProductService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK); 
     }
+    
+   
 }

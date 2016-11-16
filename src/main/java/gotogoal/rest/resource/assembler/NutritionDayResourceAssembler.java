@@ -58,9 +58,9 @@ public class NutritionDayResourceAssembler extends ResourceAssemblerSupport<Nutr
     }
 
     @Override
-    public NutritionDayResource toResource(NutritionDay dailyNutrition) {
-        NutritionDayResource dailyNutritionResource = createResourceWithId(dailyNutrition.getId(), dailyNutrition);
-        return dailyNutritionResource;
+    public NutritionDayResource toResource(NutritionDay nutritionDay) {
+        NutritionDayResource nutritionDayResource = createResourceWithId(nutritionDay.getId(), nutritionDay);
+        return nutritionDayResource;
     }
 
     public NutritionDayResource toResource(LocalDate localDate, Page<NutritionDay> page) {
@@ -80,8 +80,8 @@ public class NutritionDayResourceAssembler extends ResourceAssemblerSupport<Nutr
     }
 
     @Override
-    protected NutritionDayResource instantiateResource(NutritionDay dailyNutrition) {
-        NutritionDayResource dailyNutritionResource = new NutritionDayResource(dailyNutrition);
-        return dailyNutritionResource;
+    protected NutritionDayResource instantiateResource(NutritionDay nutritionDay) {
+        NutritionDayResource nutritionDayResource = new NutritionDayResource(nutritionDay);
+        return nutritionDayResource;
     }
 }

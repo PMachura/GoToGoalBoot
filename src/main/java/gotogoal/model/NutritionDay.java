@@ -43,7 +43,7 @@ public class NutritionDay {
     private LocalDate date;
 
     @OneToMany(mappedBy = "nutritionDay", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<NutritionUnit> nutritionUnits;
+    private List<Meal> meals;
 
     @ManyToOne
     private User user;
@@ -65,12 +65,12 @@ public class NutritionDay {
         this.date = date;
     }
 
-    public List<NutritionUnit> getNutritionUnits() {
-        return nutritionUnits;
+    public List<Meal> getMeals() {
+        return meals;
     }
 
-    public void setNutritionUnits(List<NutritionUnit> nutritionUnits) {
-        this.nutritionUnits = nutritionUnits;
+    public void setMeals(List<Meal> meals) {
+        this.meals = meals;
     }
 
     public User getUser() {

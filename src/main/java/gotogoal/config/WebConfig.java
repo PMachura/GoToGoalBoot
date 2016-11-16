@@ -28,15 +28,15 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.UrlPathHelper;
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import gotogoal.model.jsonSerializer.FoodProductResourceMixIn;
 import gotogoal.model.jsonSerializer.NutritionDayMixIn;
 import gotogoal.model.jsonSerializer.NutritionDayResourceMixIn;
-import gotogoal.model.jsonSerializer.NutritionUnitMixIn;
-import gotogoal.model.jsonSerializer.NutritionUnitResourceMixIn;
+import gotogoal.model.jsonSerializer.MealMixIn;
+import gotogoal.model.jsonSerializer.MealResourceMixIn;
 import gotogoal.rest.resource.FoodProductResource;
 import gotogoal.rest.resource.NutritionDayResource;
-import gotogoal.rest.resource.NutritionUnitResource;
+import gotogoal.rest.resource.MealResource;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -54,10 +54,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
                 SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
                 DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
         builder.mixIn(NutritionDay.class, NutritionDayMixIn.class);
-        builder.mixIn(NutritionUnit.class, NutritionUnitMixIn.class);
+        builder.mixIn(Meal.class, MealMixIn.class);
         builder.mixIn(NutritionDayResource.class, NutritionDayResourceMixIn.class);
         builder.mixIn(FoodProductResource.class, FoodProductResourceMixIn.class);
-        builder.mixIn(NutritionUnitResource.class, NutritionUnitResourceMixIn.class);
+        builder.mixIn(MealResource.class, MealResourceMixIn.class);
         return builder;
     }
 

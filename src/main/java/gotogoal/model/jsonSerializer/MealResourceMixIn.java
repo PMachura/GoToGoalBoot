@@ -6,16 +6,16 @@
 package gotogoal.model.jsonSerializer;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import gotogoal.model.NutritionUnit;
-import gotogoal.rest.resource.NutritionUnitResource;
+import gotogoal.model.Meal;
+import gotogoal.rest.resource.MealResource;
 
 /**
  *
  * @author Przemek
  */
-public abstract class NutritionUnitResourceMixIn extends NutritionUnitResource {
+public abstract class MealResourceMixIn extends MealResource {
    
     @Override
     @JsonUnwrapped
-    abstract public NutritionUnit getNutritionUnit();
+    abstract public Meal getMeal();
 }

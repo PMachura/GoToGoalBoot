@@ -12,6 +12,7 @@ import gotogoal.config.LocalTimeAttributeConverter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ import javax.validation.constraints.NotNull;
  * @author Przemek
  */
 @Entity
-public class NutritionUnit {
+public class Meal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +40,8 @@ public class NutritionUnit {
     @ManyToOne
     private NutritionDay nutritionDay;
 
-    @OneToMany(mappedBy = "nutritionUnit")
-    private List<NutritionUnitFoodProduct> nutritionUnitsFoodProducts;
+    @OneToMany(mappedBy = "meal")
+    private List<MealFoodProduct> mealsFoodProducts;
 
     public LocalTime getTime() {
         return time;
@@ -58,12 +59,12 @@ public class NutritionUnit {
         this.nutritionDay = nutritionDay;
     }
 
-    public List<NutritionUnitFoodProduct> getNutritionUnitsFoodProducts() {
-        return nutritionUnitsFoodProducts;
+    public List<MealFoodProduct> getMealsFoodProducts() {
+        return mealsFoodProducts;
     }
 
-    public void setNutritionUnitsFoodProducts(List<NutritionUnitFoodProduct> nutritionUnitsFoodProducts) {
-        this.nutritionUnitsFoodProducts = nutritionUnitsFoodProducts;
+    public void setMealsFoodProducts(List<MealFoodProduct> mealsFoodProducts) {
+        this.mealsFoodProducts = mealsFoodProducts;
     }
 
     public Long getId() {

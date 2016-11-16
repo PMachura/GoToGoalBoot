@@ -6,7 +6,7 @@
 package gotogoal.service;
 
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
+import gotogoal.model.Meal;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +27,25 @@ import org.springframework.data.domain.Pageable;
 public class NutritionDayService {
 
     private NutritionDayRepository nutritionDayRepository;
-    private NutritionUnitService nutritionUnitService;
+    private MealService mealService;
     private NutritionDayResourceAssembler nutritionDayResourceAssembler;
 
     @Autowired
     public NutritionDayService(NutritionDayRepository nutritionDayRepository,
-            NutritionUnitService nutritionUnitService,
+            MealService mealService,
             NutritionDayResourceAssembler nutritionDayResourceAssembler) {
         this.nutritionDayRepository = nutritionDayRepository;
         this.nutritionDayResourceAssembler = nutritionDayResourceAssembler;
-        this.nutritionUnitService = nutritionUnitService;
+        this.mealService = mealService;
     }
 
+    /************************************* HELPERS FUNCTION ******************************/
+    
     private NutritionDay findOne(Long id) {
         return nutritionDayRepository.findOne(id);
     }
 
-    private NutritionDay findOne(String userName, LocalDate localDate) {
+    private NutritionDay findOneByUserEmailAndDate(String userName, LocalDate localDate) {
         return nutritionDayRepository.findByUserEmailAndDate(userName, localDate);
     }
 
@@ -51,112 +53,55 @@ public class NutritionDayService {
         return nutritionDayRepository.findAll();
     }
 
+    private Collection<NutritionDayResource> mapToResource(Collection<NutritionDay> collection) {
+        return Arrays.asList(collection.stream().map(nutritionDayResourceAssembler::toResource)
+                .toArray(NutritionDayResource[]::new));
+    }
+    
+    private NutritionDay setMeals(NutritionDay nutritionDay){
+        nutritionDay.setMeals((List<Meal>) mealService.findAllByNutritionDayIdLazy(nutritionDay.getId()));
+        return nutritionDay;
+    }
+    
+    private NutritionDay setMealsToNull(NutritionDay nutritionDay){
+       nutritionDay.setMeals(null);
+       return nutritionDay;
+    }
+    
+    private Collection<NutritionDay> setMealsToNull(Collection<NutritionDay> nutritionDays){
+        nutritionDays.forEach((NutritionDay nutritionDay) -> {
+            nutritionDay.setMeals(null);
+        });
+        return nutritionDays;
+    }
+    
+    /********************************************************************************************/
+
     public NutritionDay findOneEager(Long id) {
-        NutritionDay dailyNutrition = this.findOne(id);
-        Collection<NutritionUnit> nutritionUnits = nutritionUnitService.findByNutritionDiaryId(id);
-        dailyNutrition.setNutritionUnits((List<NutritionUnit>) nutritionUnits);
-        return dailyNutrition;
+        NutritionDay nutritionDay = this.findOne(id);
+        Collection<Meal> meals = mealService.findAllByNutritionDayIdLazy(id);
+        nutritionDay.setMeals((List<Meal>) meals);
+        return nutritionDay;
     }
 
-    public NutritionDay findOneEager(String userName, LocalDate localDate) {
-        NutritionDay dailyNutrition = this.findOne(userName, localDate);
-        Collection<NutritionUnit> nutritionUnits = nutritionUnitService.findByNutritionDiaryId(dailyNutrition.getId());
-        dailyNutrition.setNutritionUnits((List<NutritionUnit>) nutritionUnits);
-        return dailyNutrition;
+    public NutritionDay findOneByUserEmailAndDateEager(String userName, LocalDate localDate) {
+        NutritionDay nutritionDay = this.findOneByUserEmailAndDate(userName, localDate);
+        Collection<Meal> meals = mealService.findAllByNutritionDayIdLazy(nutritionDay.getId());
+        nutritionDay.setMeals((List<Meal>) meals);
+        return nutritionDay;
     }
 
     public NutritionDayResource findOneEagerAsResource(Long id) {
         return nutritionDayResourceAssembler.toResource(this.findOneEager(id));
     }
 
-    public NutritionDayResource findOneEagerAsResource(String userName, LocalDate localDate) {
-        return nutritionDayResourceAssembler.toResource(this.findOneEager(userName, localDate));
+    public NutritionDayResource findOneByUserEmailAndDateAsResourceEager(String userName, LocalDate localDate) {
+        return nutritionDayResourceAssembler.toResource(this.findOneByUserEmailAndDateEager(userName, localDate));
     }
-    
-    public Page<NutritionDay> findAllLazy(String userEmail, LocalDate localDate, Pageable pageable){
+
+    public Page<NutritionDay> findAllByUserEmailAndDateAsPageLazy(String userEmail, LocalDate localDate, Pageable pageable) {
         Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserEmail(userEmail, pageable);
-        nutritionDayPage.getContent().forEach((NutritionDay nutritionDay)->{
-            nutritionDay.setNutritionUnits(null);
-        });
+        setMealsToNull(nutritionDayPage.getContent());
         return nutritionDayPage;
     }
-    
-    //TESTOWY
-    public Page<NutritionDay> findAllEagerAsResourceDateLess(LocalDate localDate, Pageable pageable){
-        Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByDateLessThanEqual(localDate, pageable);
-        nutritionDayPage.getContent().forEach((NutritionDay nutritionDay)->{
-            nutritionDay.setNutritionUnits(null);
-        });
-        return nutritionDayPage;
-    }
-
-    public Collection<NutritionDay> findAllWithEmpyNutritionUnits() {
-        Collection<NutritionDay> nutritionDiaries = this.findAll();
-        nutritionDiaries.forEach((NutritionDay nutritionDiary) -> {
-            nutritionDiary.setNutritionUnits(null);
-        });
-        return nutritionDiaries;
-    }
-
-    public Collection<NutritionDayResource> findAllAsResourceWithEmpyNutritionUnits() {
-        return this.mapToResource(this.findAllWithEmpyNutritionUnits());
-    }
-
-    public Collection<NutritionDayResource> findAllAsResourceWithNutritionUnits() {
-        return this.mapToResource(this.findAllWithNutritionUnits());
-    }
-
-    public Collection<NutritionDayResource> mapToResource(Collection<NutritionDay> collection) {
-        return Arrays.asList(collection.stream().map(nutritionDayResourceAssembler::toResource)
-                .toArray(NutritionDayResource[]::new));
-    }
-
-    public Collection<NutritionDay> findAllWithNutritionUnits() {
-        Collection<NutritionDay> nutritionDiaries = this.findAll();
-        nutritionDiaries.forEach((NutritionDay nutritionDiary) -> {
-            nutritionDiary.setNutritionUnits((List<NutritionUnit>) nutritionUnitService.findByNutritionDiaryId(nutritionDiary.getId()));
-        });
-        return nutritionDiaries;
-
-    }
-
-    public NutritionDayResource findAllByDateGreaterThan(LocalDate localDate, Pageable pageable) {
-        Page<NutritionDay> nutritionDayPage = this.nutritionDayRepository.findByDateGreaterThanEqual(localDate, pageable);
-        if (nutritionDayPage == null) {
-            System.out.println("@@@@ PAGE NULL");
-        } else {
-            System.out.println("@@@@ PAGE NOT NULL");
-        }
-        nutritionDayPage.getContent().forEach((NutritionDay nutritionDay) -> {
-            System.out.println("@@@@ ID  " + nutritionDay.getId());
-            nutritionDay.setNutritionUnits(null);
-        });
-        if (nutritionDayResourceAssembler == null) {
-            System.out.println("@@@@ Assembler null");
-        }
-        return nutritionDayResourceAssembler.toResource(localDate, nutritionDayPage);
-    }
-
-    /********************************* SAVE ********************************************/
-    
-    public NutritionDay save(NutritionDay nutritionDay) {
-        return nutritionDayRepository.save(nutritionDay);
-    }
-    
-    
-    /********************************* UPDATE ********************************************/
-    
-    public NutritionDay update(NutritionDay nutritionDay) {
-        return nutritionDayRepository.save(nutritionDay);
-    }
-    
-    
-    /********************************* DELETE ********************************************/
-    public void delete(NutritionDay nutritionDay){
-        nutritionDayRepository.delete(nutritionDay);
-    }
-    public void delete(Long id){
-        nutritionDayRepository.delete(id);
-    }
-
 }

@@ -60,7 +60,7 @@ public class User {
     private String email;
     
     @OneToMany(mappedBy="user")
-    private List<NutritionDay> dailyNutrition;
+    private List<NutritionDay> nutritionDay;
     
 
     public User() {
@@ -131,11 +131,11 @@ public class User {
 
     @JsonIgnore
     public List<NutritionDay> getDailyNutrition() {
-        return dailyNutrition;
+        return nutritionDay;
     }
 
-    public void setDailyNutrition(List<NutritionDay> dailyNutrition) {
-        this.dailyNutrition = dailyNutrition;
+    public void setDailyNutrition(List<NutritionDay> nutritionDay) {
+        this.nutritionDay = nutritionDay;
     }
     
 }

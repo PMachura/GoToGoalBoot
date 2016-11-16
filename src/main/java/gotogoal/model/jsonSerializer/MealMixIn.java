@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.LongNode;
 import gotogoal.model.FoodProduct;
 import gotogoal.model.NutritionDay;
-import gotogoal.model.NutritionUnit;
-import gotogoal.model.NutritionUnitFoodProduct;
+import gotogoal.model.Meal;
+import gotogoal.model.MealFoodProduct;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,11 +37,10 @@ import java.util.List;
  *
  * @author Przemek
  */
-class NutritionDayDeserializerForNutritionUnit extends JsonDeserializer<NutritionDay> {
+class NutritionDayDeserializerForMeal extends JsonDeserializer<NutritionDay> {
 
     @Override
     public NutritionDay deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        System.out.println("@@@@ NUTRITION DAY DESERIALIZER");
         JsonNode node = jp.getCodec().readTree(jp);
         Integer id = (Integer) node.get("id").numberValue();
         NutritionDay nutritionDay = new NutritionDay();
@@ -50,63 +49,60 @@ class NutritionDayDeserializerForNutritionUnit extends JsonDeserializer<Nutritio
     }
 }
 
-class NutritionUnitsFoodProductsDeserializerForNutritionUnit extends JsonDeserializer<Collection<NutritionUnitFoodProduct>> {
+class MealsFoodProductsDeserializerForMeal extends JsonDeserializer<Collection<MealFoodProduct>> {
 
     @Override
-    public Collection<NutritionUnitFoodProduct> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        System.out.println("@@@ JESTEM W DESERIALIZERZRE");
-        Collection<NutritionUnitFoodProduct> nutritionUnitsFoodProducts = new ArrayList<NutritionUnitFoodProduct>();
+    public Collection<MealFoodProduct> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        
+        Collection<MealFoodProduct> mealsFoodProducts = new ArrayList<MealFoodProduct>();
 
         JsonNode node = jp.getCodec().readTree(jp);
-        if (node.isArray()) {
-            System.out.println("@@@@ JESTEM TABLICA");
-            
+        if (node.isArray()) {    
             Iterator<JsonNode> iterator = node.elements();
             
-            System.out.println("@@ PRZED PETLA");
             while (iterator.hasNext()) {
-                System.out.println("@@ PETLA");
                 JsonNode eatenFoodProductsNode = iterator.next();
 
-                NutritionUnitFoodProduct nutritionUnitFoodProduct = new NutritionUnitFoodProduct();
+                MealFoodProduct mealFoodProduct = new MealFoodProduct();
                 FoodProduct foodProduct = new FoodProduct();
 
                 Long foodProductId = eatenFoodProductsNode.get("id").numberValue().longValue();
-                System.out.println("@@ ID PRODUKTU " + foodProductId);
                 foodProduct.setId(foodProductId);
-                nutritionUnitFoodProduct.setFoodProduct(foodProduct);
+                mealFoodProduct.setFoodProduct(foodProduct);
 
                 Float grams = eatenFoodProductsNode.get("grams").numberValue().floatValue();
-                System.out.println("@@ PETLA GRAMY " + grams);
-                nutritionUnitFoodProduct.setGrams(grams);
+                mealFoodProduct.setGrams(grams);
 
                 if (eatenFoodProductsNode.has("relationEntityId")) {
                     Long id = eatenFoodProductsNode.get("relationEntityId").numberValue().longValue();
-                    nutritionUnitFoodProduct.setId(id);
+                    mealFoodProduct.setId(id);
                 }
-                nutritionUnitsFoodProducts.add(nutritionUnitFoodProduct);
+                mealsFoodProducts.add(mealFoodProduct);
             }
         }else{
-            System.out.println("@@@@ NIE Jestem tablica");
         }
 
-        return nutritionUnitsFoodProducts;
+        return mealsFoodProducts;
 
     }
 }
 
-class NutritionUnitFoodProductForNutritionUnitSerializer extends JsonSerializer<List<NutritionUnitFoodProduct>> {
+class MealFoodProductForMealSerializer extends JsonSerializer<List<MealFoodProduct>> {
 
     @Override
-    public void serialize(List<NutritionUnitFoodProduct> value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+    public void serialize(List<MealFoodProduct> value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
         gen.writeStartArray();
-        for (NutritionUnitFoodProduct nufp : value) {
+        for (MealFoodProduct nufp : value) {
             gen.writeStartObject();
             gen.writeNumberField("relationEntityId", nufp.getId());
             gen.writeNumberField("id", nufp.getFoodProduct().getId());
             gen.writeStringField("name", nufp.getFoodProduct().getName());
             gen.writeObjectField("category", nufp.getFoodProduct().getCategory());
             gen.writeNumberField("grams", nufp.getGrams());
+            gen.writeNumberField("calories", nufp.getFoodProduct().getCalories());
+            gen.writeNumberField("proteins",nufp.getFoodProduct().getProteins() );
+            gen.writeNumberField("carbohydrates",nufp.getFoodProduct().getCarbohydrates() );
+            gen.writeNumberField("fats",nufp.getFoodProduct().getFats() );
             gen.writeEndObject();
         }
         gen.writeEndArray();
@@ -114,7 +110,7 @@ class NutritionUnitFoodProductForNutritionUnitSerializer extends JsonSerializer<
 
 }
 
-class NutritionDaySerializerForNutritionUnit extends JsonSerializer<NutritionDay> {
+class NutritionDaySerializerForMeal extends JsonSerializer<NutritionDay> {
 
     @Override
     public void serialize(NutritionDay value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
@@ -129,7 +125,7 @@ class NutritionDaySerializerForNutritionUnit extends JsonSerializer<NutritionDay
 }
 
 // @JsonDeserialize(using = TestNutritionDayDeserializer.class)
-public abstract class NutritionUnitMixIn extends NutritionUnit {
+public abstract class MealMixIn extends Meal {
 
     @Override
     public abstract Long getId();
@@ -138,21 +134,21 @@ public abstract class NutritionUnitMixIn extends NutritionUnit {
     public abstract LocalTime getTime();
 
     @Override
-    @JsonSerialize(using = NutritionDaySerializerForNutritionUnit.class)
+    @JsonSerialize(using = NutritionDaySerializerForMeal.class)
     public abstract NutritionDay getNutritionDay();
 
     @Override
-    @JsonDeserialize(using = NutritionDayDeserializerForNutritionUnit.class)
+    @JsonDeserialize(using = NutritionDayDeserializerForMeal.class)
     public abstract void setNutritionDay(NutritionDay nutritionDay);
 
     @Override
     @JsonProperty("eatenFoodProducts")
-    @JsonSerialize(using = NutritionUnitFoodProductForNutritionUnitSerializer.class)
-    public abstract List<NutritionUnitFoodProduct> getNutritionUnitsFoodProducts();
+    @JsonSerialize(using = MealFoodProductForMealSerializer.class)
+    public abstract List<MealFoodProduct> getMealsFoodProducts();
 
     @Override
     @JsonProperty("eatenFoodProducts")
-    @JsonDeserialize(using = NutritionUnitsFoodProductsDeserializerForNutritionUnit.class)
-    public abstract void setNutritionUnitsFoodProducts(List<NutritionUnitFoodProduct> nutritionUnitsFoodProducts);
+    @JsonDeserialize(using = MealsFoodProductsDeserializerForMeal.class)
+    public abstract void setMealsFoodProducts(List<MealFoodProduct> mealsFoodProducts);
 
 }

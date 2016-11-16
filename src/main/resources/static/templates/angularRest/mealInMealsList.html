@@ -1,0 +1,77 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Posiłek {{meal.time}}</h3>
+    </div>
+    <div class="panel-body">
+        <h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Kategoria</th>
+                        <th>Gramy</th>
+                        <th>Kalorie</th>
+                        <th>Białka</th>
+                        <th>Węglowodany</th>
+                        <th>Tłuszcze</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="eatenFoodProduct in meal.eatenFoodProducts">
+                        <td>{{eatenFoodProduct.name}}</td>
+                        <td>{{eatenFoodProduct.category}}</td>
+                        <td>
+                            {{eatenFoodProduct.grams}}
+                        </td>
+                        <td>{{eatenFoodProduct.macronutrients.allCalories| number:1}}</td>
+                        <td>
+                            {{eatenFoodProduct.macronutrients.proteins.grams| number:1}}  <br/> 
+                            {{eatenFoodProduct.macronutrients.proteins.calories.amount| number:1}}
+                            ({{eatenFoodProduct.macronutrients.proteins.calories.percentage| number:1}}%) 
+                        </td>
+                        <td>
+                            {{eatenFoodProduct.macronutrients.carbohydrates.grams| number:1}}  <br/> 
+                            {{eatenFoodProduct.macronutrients.carbohydrates.calories.amount| number:1}}
+                            ({{eatenFoodProduct.macronutrients.carbohydrates.calories.percentage| number:1}}%) 
+                        </td>
+                        <td>
+                            {{eatenFoodProduct.macronutrients.fats.grams| number:1}}  <br/> 
+                            {{eatenFoodProduct.macronutrients.fats.calories.amount| number:1}}
+                            ({{eatenFoodProduct.macronutrients.fats.calories.percentage| number:1}}%) 
+                        </td>
+                    </tr>
+                    <tr  class="info">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            {{meal.macronutrients.allCalories| number:1}}
+                        </td>
+                        <td>
+                            {{meal.macronutrients.proteins.grams| number:1}} <br/>
+                            {{meal.macronutrients.proteins.calories.amount| number:1}}
+                            ({{meal.macronutrients.proteins.calories.percentage| number:1}}%)
+                        </td>
+                        <td>
+                            {{meal.macronutrients.carbohydrates.grams| number:1}} <br/>
+                            {{meal.macronutrients.carbohydrates.calories.amount| number:1}}
+                            ({{meal.macronutrients.carbohydrates.calories.percentage| number:1}}%)
+                        </td>
+                        <td>
+                            {{meal.macronutrients.fats.grams| number:1}} <br/>
+                            {{meal.macronutrients.fats.calories.amount| number:1}}
+                            ({{meal.macronutrients.fats.calories.percentage| number:1}}%)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </h4>
+    </div>
+
+    <div class="panel-footer  clearfix ">
+        <button  class="btn btn-primary pull-right" ng-click="createOrEditMeal(meal)">
+            Edytuj <span class="glyphicon glyphicon-pencil"></span>
+        </button>
+    </div>
+</div>

@@ -25,5 +25,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     public Page<Meal> findByNutritionDayId(Long nutritionDiaryId, Pageable pageable);
     public Collection<Meal> findByTimeGreaterThan(LocalTime localTime);
     public Collection<Meal> findByNutritionDayUserEmailAndNutritionDayDate(String userEmail, LocalDate localDate);
+    public void deleteByNutritionDayId(Long mealId);
 
 }

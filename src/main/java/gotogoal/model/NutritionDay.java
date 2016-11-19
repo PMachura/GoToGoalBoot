@@ -42,7 +42,7 @@ public class NutritionDay {
     @Convert(converter = LocalDateAttributeConverter.class)
     private LocalDate date;
 
-    @OneToMany(mappedBy = "nutritionDay", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "nutritionDay")
     private List<Meal> meals;
 
     @ManyToOne

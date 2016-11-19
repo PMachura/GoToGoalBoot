@@ -13,6 +13,7 @@ import gotogoal.rest.resource.assembler.MealResourceAssembler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -98,6 +99,7 @@ public class MealService {
     public void temporaryDebug(String message, Meal meal) {
         System.out.println(message);
         System.out.println("MEAL ID" + meal.getId());
+        System.out.println("MEAL TIME" + meal.getTime());
         if (meal.getNutritionDay() == null) {
             System.out.println("MEAL  -> NUTRITION DAY = NULL");
         } else {
@@ -125,8 +127,15 @@ public class MealService {
     public Meal create(Meal meal) {
         meal = setMealInMealsFoodProducts(meal);
         Meal created = save(meal);
-        // temporaryDebug("saved meal", created);
+
         mealFoodProductService.save(created.getMealsFoodProducts());
+        return created;
+    }
+    
+    @Transactional 
+    Collection<Meal> create(Collection<Meal> meals){
+        Collection<Meal> created = new ArrayList<Meal>();
+        meals.forEach((Meal meal) -> created.add(this.create(meal)));
         return created;
     }
 
@@ -147,11 +156,19 @@ public class MealService {
         mealFoodProductService.deleteByMealIdInAndIdNotIn(meal.getId(), getMealFoodProductIds(meal));
         return updated;
     }
+    
+    
 
     @Transactional
     public void delete(Long mealId) {
         mealFoodProductService.deleteByMealId(mealId);
         mealRepository.delete(mealId);
+    }
+    
+    @Transactional
+    public void deleteByNutritionDayId(Long nutritionDayId){
+        mealFoodProductService.deleteByMealNutritionDayId(nutritionDayId);
+        mealRepository.deleteByNutritionDayId(nutritionDayId);
     }
 
     public Collection<Meal> findAllByUserEmailAndNutritionDayDateEager(String userEmail, LocalDate nutritionDayDate) {

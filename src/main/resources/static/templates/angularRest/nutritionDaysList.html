@@ -8,7 +8,7 @@ and open the template in the editor.
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2>Dzienniki żywieniowe
-            <button type="button" class="btn-primary pull-right">
+            <button type="button" class="btn-primary pull-right" ng-click="createOrEditNutritionDay()">
                 <span class="glyphicon glyphicon-plus "></span> 
             </button>
         </h2>
@@ -44,7 +44,7 @@ and open the template in the editor.
                     {{nutritionDay.macronutrients.fats.calories.amount| number:1}} 
                     ({{nutritionDay.macronutrients.fats.calories.percentage| number:1}}%) kcal 
                 </h4>
-                <button type="button" ng-click="displayNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
+                <button type="button" ng-click="createOrEditNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
                     <span class="glyphicon glyphicon-search"></span> 
                 </button>
                 <button type="button" class="btn btn-primary pull-right">

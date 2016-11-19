@@ -10,6 +10,7 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "u
         .constant("resourceUrlPrefix", "http://localhost:8080/api")
         .controller("restController", function ($resource, $scope, $http, userEmail, resourceUrlPrefix, macronutrientsCalculator) {
 
+            $scope.test = {};
 
             var mapToResource = function (data, resourceClass, propertyName) {
                 if (angular.isDefined(propertyName)) {
@@ -84,18 +85,33 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "u
                     }
                 });
             };
-            $scope.createOrEditOrDiNutritionDay = function (nutritionDay) {
+
+
+            $scope.createOrEditNutritionDay = function (nutritionDay) {
                 $scope.currentNutritionDay = {};
-                $scope.currentNutritionDay.content = nutritionDay ? angular.copy(nutritionDay) : {};
-                $scope.displayMode.editNutritionDay = true;
+                $scope.test.nutritionDay = $scope.currentNutritionDay;
+                if (nutritionDay) {
+                    $scope.currentNutritionDay.content = angular.copy(nutritionDay);
+                } else {
+                    $scope.currentNutritionDay.content = {
+                        date: "2016-11-11",
+                        meals: []
+                    };
+                }
             };
-            
-            
+
+            $scope.createNutritionDay = function (nutritionDay) {
+                new $scope.nutritionDaysResource(nutritionDay).$save({date: ""}, function (nutritionDay) {
+                    $scope.test.nutritionDay = nutritionDay;
+                });
+            };
+
+
             //**********************************************************************//
 
             // ********************** CALCULATION PERFORMANCE AND TESTS *********************//
-            $scope.test = {};
-            $scope.test.returnedValue = 5;
+
+
 
             $scope.currentMeal = {};
 
@@ -137,7 +153,7 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "u
                                 time: "12:00:00"
                             };
                 }
-
+                $scope.currentNutritionDay.content.meals.push($scope.currentMeal.content);
                 console.log($scope.currentMeal.content);
             };
             $scope.updateEatenFoodProductMacronutrients = function (eatenFoodProduct) {
@@ -180,23 +196,22 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "u
                 }
 
             };
-            
-            
-            $scope.deleteMeal = function(meal, nutritionDay){
-                var findMealIndexFromNutritionDay = function(meal, nutritionDay){
-                    for(var i = 0; i < nutritionDay.meals.length; i++){
-                        if(nutritionDay.meals[i].id == meal.id){
+
+
+            $scope.deleteMeal = function (meal, nutritionDay) {
+                var findMealIndexFromNutritionDay = function (meal, nutritionDay) {
+                    for (var i = 0; i < nutritionDay.meals.length; i++) {
+                        if (nutritionDay.meals[i].id == meal.id) {
                             return i;
                         }
                     }
                     return null;
                 };
-                meal.$delete().then(function(){
+                meal.$delete().then(function () {
                     var index = findMealIndexFromNutritionDay(meal, nutritionDay);
-                    nutritionDay.splice(index,1);
+                    nutritionDay.splice(index, 1);
                 });
             };
-
 
 
 

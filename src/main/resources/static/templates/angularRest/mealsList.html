@@ -6,11 +6,17 @@ and open the template in the editor.
 -->
 <div class="panel panel-primary">
     <div class="panel-heading">
+        {{test.nutritionDay}}
         <h2>
-            Dziennik żywieniowy {{currentNutritionDay.content.date}} posiłki
+            Dziennik żywieniowy {{currentNutritionDay.content.date}}
         </h2>
+
     </div>
-    <div class="panel-body">      
+    <div class="panel-body"> 
+        <div class="input-group">
+            <span class="input-group-addon">Date</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon" ng-model="currentNutritionDay.content.date" />
+        </div>
         <ul class="list-group">
             <li class="list-group-item clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
                 <div ng-if="(currentMeal.content.id) && (currentMeal.content.id == meal.id)"
@@ -22,13 +28,19 @@ and open the template in the editor.
             </li>
             <li ng-if="(currentMeal.content) && (!currentMeal.content.id)">
                 KUPPPPPPPPPAAAAAAAAA
-                <ng-include src="'/templates/angularRest/currentMealInMealsList.html'" />
+            <ng-include src="'/templates/angularRest/currentMealInMealsList.html'" />
             </li>
         </ul>
     </div>
     <div class="panel-footer  clearfix ">
         <button  class="btn btn-primary pull-right" ng-click="createOrEditMeal()">
             Dodaj <span class="glyphicon glyphicon-plus"></span>
+        </button>
+    </div>
+    
+    <div class="panel-footer  clearfix ">
+        <button  class="btn btn-primary pull-right" ng-click="createNutritionDay(currentNutritionDay.content)">
+            ZAPISZ DZIEN <span class="glyphicon glyphicon-plus"></span>
         </button>
     </div>
 </div>

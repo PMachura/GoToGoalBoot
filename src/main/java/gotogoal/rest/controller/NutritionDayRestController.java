@@ -73,4 +73,25 @@ public class NutritionDayRestController {
         return new ResponseEntity<NutritionDayResource>(nutritionDayService.findOneEagerAsResource(id), HttpStatus.OK);
     }
     
+    /**
+     *
+     * @param nutritionDay
+     * @param userEmail
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public NutritionDay create(@RequestBody NutritionDay nutritionDay, @PathVariable String userEmail){
+        
+        System.out.println("NutritionDay->id " + nutritionDay.getId());
+        System.out.println("NutritionDay->date " + nutritionDay.getDate());
+        System.out.println("NutritionDay->userEmail " + nutritionDay.getUser().getEmail());
+        for(Meal meal : nutritionDay.getMeals()){
+            mealService.temporaryDebug("", meal);
+        }
+        
+        nutritionDayService.create(nutritionDay, userEmail);
+        
+        return nutritionDay;
+    }
+    
 }

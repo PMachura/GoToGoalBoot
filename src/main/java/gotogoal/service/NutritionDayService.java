@@ -18,6 +18,7 @@ import gotogoal.repository.NutritionDayRepository;
 import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -28,15 +29,17 @@ public class NutritionDayService {
 
     private NutritionDayRepository nutritionDayRepository;
     private MealService mealService;
+    private UserService userService;
     private NutritionDayResourceAssembler nutritionDayResourceAssembler;
 
     @Autowired
     public NutritionDayService(NutritionDayRepository nutritionDayRepository,
-            MealService mealService,
+            MealService mealService, UserService userService,
             NutritionDayResourceAssembler nutritionDayResourceAssembler) {
         this.nutritionDayRepository = nutritionDayRepository;
         this.nutritionDayResourceAssembler = nutritionDayResourceAssembler;
         this.mealService = mealService;
+        this.userService = userService;
     }
 
     /************************************* HELPERS FUNCTION ******************************/
@@ -103,5 +106,37 @@ public class NutritionDayService {
         Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserEmail(userEmail, pageable);
         setMealsToNull(nutritionDayPage.getContent());
         return nutritionDayPage;
+    }
+    
+    @Transactional
+    public NutritionDay create(NutritionDay nutritionDay, String userEmail){
+        nutritionDay.setUser(userService.findByEmail(userEmail));
+        
+        NutritionDay created = nutritionDayRepository.save(nutritionDay);
+        
+        System.out.println("Po zapisie dnia");
+        System.out.println("NutritionDay->id " + created.getId());
+        System.out.println("NutritionDay->date " + created.getDate());
+        System.out.println("NutritionDay->userEmail " + created.getUser().getEmail());
+        for(Meal meal : nutritionDay.getMeals()){
+            mealService.temporaryDebug("", meal);
+        }
+        
+        mealService.create(created.getMeals());
+        System.out.println("Po zapisie posiłków");
+        System.out.println("NutritionDay->id " + created.getId());
+        System.out.println("NutritionDay->date " + created.getDate());
+        System.out.println("NutritionDay->userEmail " + created.getUser().getEmail());
+        for(Meal meal : nutritionDay.getMeals()){
+            mealService.temporaryDebug("", meal);
+        }
+        
+        return created;
+             
+    }
+    
+    public void delete(Long mealId){
+        mealService.deleteByNutritionDayId(mealId);
+        nutritionDayRepository.delete(mealId);
     }
 }

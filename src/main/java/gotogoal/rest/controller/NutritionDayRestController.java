@@ -89,9 +89,22 @@ public class NutritionDayRestController {
             mealService.temporaryDebug("", meal);
         }
         
-        nutritionDayService.create(nutritionDay, userEmail);
-        
-        return nutritionDay;
+        NutritionDay created = nutritionDayService.create(nutritionDay, userEmail);
+        System.out.println("@@ PRZED FIND ONE");
+        NutritionDay response = nutritionDayService.findOneEagerDeep(created.getId());
+        System.out.println("@@ PRZED RETURN");
+        return response ;
+    }
+    
+    @RequestMapping(value = "/{date}", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable String userEmail, @PathVariable LocalDate date){
+        nutritionDayService.delete(userEmail, date);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/{date}", method = RequestMethod.PUT)
+    public NutritionDay update(@RequestBody NutritionDay nutritionDay){
+       return nutritionDayService.update(nutritionDay);
     }
     
 }

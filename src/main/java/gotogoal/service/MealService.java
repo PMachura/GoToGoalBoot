@@ -157,6 +157,13 @@ public class MealService {
         return updated;
     }
     
+    @Transactional
+    public Collection<Meal> update(Collection<Meal> meals){
+      Collection<Meal> created  = new ArrayList<Meal>();
+      meals.forEach((Meal meal) -> created.add(update(meal)));
+      return created;
+    };
+    
     
 
     @Transactional
@@ -170,6 +177,13 @@ public class MealService {
         mealFoodProductService.deleteByMealNutritionDayId(nutritionDayId);
         mealRepository.deleteByNutritionDayId(nutritionDayId);
     }
+    
+    @Transactional
+    public void deleteByNutritionDayIdInAndIdNotId(Long nutritionDayId, Collection<Long> melsIds){
+        mealFoodProductService.deleteByMealNutritionDayIdInAndMealIdNotIn(nutritionDayId, melsIds);
+        mealRepository.deleteByNutritionDayIdInAndIdNotIn(nutritionDayId, melsIds);
+    }
+            
 
     public Collection<Meal> findAllByUserEmailAndNutritionDayDateEager(String userEmail, LocalDate nutritionDayDate) {
         Collection<Meal> meals = findAll(userEmail, nutritionDayDate);

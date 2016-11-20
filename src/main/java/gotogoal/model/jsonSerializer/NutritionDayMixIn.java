@@ -141,6 +141,25 @@ class UserAsEmailSerializer extends JsonSerializer<User> {
 
 class MealForDailyNutritionSerializer extends JsonSerializer<List<Meal>> {
 
+    public void serializeMealFoodProducts(Collection<MealFoodProduct> mealFoodProducts, JsonGenerator gen) throws IOException{
+        gen.writeArrayFieldStart("eatenFoodProducts");
+        for (MealFoodProduct nufp : mealFoodProducts) {
+            System.out.println("STEP 3");
+            gen.writeStartObject();
+            gen.writeNumberField("relationEntityId", nufp.getId());
+            gen.writeNumberField("id", nufp.getFoodProduct().getId());
+            gen.writeStringField("name", nufp.getFoodProduct().getName());
+            gen.writeObjectField("category", nufp.getFoodProduct().getCategory());
+            gen.writeNumberField("grams", nufp.getGrams());
+            gen.writeNumberField("calories", nufp.getFoodProduct().getCalories());
+            gen.writeNumberField("proteins",nufp.getFoodProduct().getProteins() );
+            gen.writeNumberField("carbohydrates",nufp.getFoodProduct().getCarbohydrates() );
+            gen.writeNumberField("fats",nufp.getFoodProduct().getFats() );
+            gen.writeEndObject();
+        }
+        gen.writeEndArray();
+    }
+    
     @Override
     public void serialize(List<Meal> value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
         gen.writeStartArray();
@@ -148,6 +167,7 @@ class MealForDailyNutritionSerializer extends JsonSerializer<List<Meal>> {
             gen.writeStartObject();
             gen.writeNumberField("id", meal.getId());
             gen.writeObjectField("time", meal.getTime());
+            if(meal.getMealsFoodProducts() != null) serializeMealFoodProducts(meal.getMealsFoodProducts(), gen);    
             gen.writeEndObject();
         }
         gen.writeEndArray();

@@ -22,4 +22,5 @@ public interface MealFoodProductRepository extends JpaRepository<MealFoodProduct
     public Collection<MealFoodProduct> deleteByMealIdInAndIdNotIn(Long mealId, Collection<Long> ids);
     public void deleteByMealId(Long mealId);
     public void deleteByMealNutritionDayId(Long nutritionDayId);
+    public void deleteByMealNutritionDayIdInAndMealIdNotIn(Long nutritionDayId, Collection<Long> melsIds);
 }

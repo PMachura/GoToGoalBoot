@@ -44,10 +44,19 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
             var nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date", {email: userEmail, date: "@date"}, {
                 query: {
                     isArray: false
+                },
+                create: {
+                    method: "POST"
+                },
+                save: {
+                    method: "PUT"
                 }
             });
 
             return {
+                mapNutritionDaysToResource: function (nutritionDays) {
+                    return mapToResource(nutritionDays, nutritionDaysResource);
+                },
                 getEmptyNutritionDay: function () {
                     return {
                         date: "2016-11-11",
@@ -77,10 +86,18 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
                 getNutritionDaysPage: function () {
                     return nutritionDaysResource.query();
                 },
-                mapNutritionDaysToResource: function (nutritionDays) {
-                    return mapToResource(nutritionDays, nutritionDaysResource);
+                
+                createNutritionDay: function(nutritionDay){
+                    return nutritionDaysResource.create({date: ""}, nutritionDay);
+                },
+                updateNutritionDay: function(nutritionDay){
+                    return nutritionDaysResource.save(nutritionDay);
+                    console.log("Jestem w save");
+                },
+                deleteNutritionDay: function(nutritionDay){
+                    return nutritionDaysResource.delete({},nutritionDay);
                 }
-
+                
 
             };
 

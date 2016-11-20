@@ -61,4 +61,8 @@ public class MealFoodProductService {
     public void deleteByMealNutritionDayId(Long nutritionDayId){
         mealFoodProductRepository.deleteByMealNutritionDayId(nutritionDayId);
     }
+    
+    public void deleteByMealNutritionDayIdInAndMealIdNotIn(Long nutritionDayId, Collection<Long> melsIds){
+        mealFoodProductRepository.deleteByMealNutritionDayIdInAndMealIdNotIn(nutritionDayId, melsIds);
+    }
 }

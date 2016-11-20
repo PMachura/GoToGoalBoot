@@ -18,7 +18,6 @@
     <body>
 
         <div ng-app="restModule" ng-controller="restController" class="row-fluid" layout:fragment="content">
-            {{currentNutritionDay}}
             <div class="row center-block ">
                 <div class="col-md-8">
                     <ng-include src="'/templates/angularRest/nutritionDaysList.html'" />  
@@ -28,6 +27,7 @@
                 <div class="col-md-8">
                     <ng-include src="'/templates/angularRest/currentNutritionDay.html'" />
                 </div>
+                {{test.nutritionDay}}
             </div>
         </div>
     </body>

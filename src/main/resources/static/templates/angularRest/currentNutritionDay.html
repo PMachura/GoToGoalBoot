@@ -6,7 +6,6 @@ and open the template in the editor.
 -->
 <div class="panel panel-primary">
     <div class="panel-heading">
-        {{test.nutritionDay}}
         <h2>
             Dziennik żywieniowy {{currentNutritionDay.content.date}}
         </h2>
@@ -19,28 +18,19 @@ and open the template in the editor.
         </div>
         <ul class="list-group">
             <li class="list-group-item clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
-                <div ng-if="(currentMeal.content.id) && (currentMeal.content.id == meal.id)"
-                     ng-include="'/templates/angularRest/currentMealInMealsList.html'">
-                </div>
-                <div ng-if="(!currentMeal.content.id) || (currentMeal.content.id != meal.id)"
-                     ng-include="'/templates/angularRest/mealInMealsList.html'">
-                </div>
-            </li>
-            <li ng-if="(currentMeal.content) && (!currentMeal.content.id)">
-                KUPPPPPPPPPAAAAAAAAA
-            <ng-include src="'/templates/angularRest/currentMealInMealsList.html'" />
-            </li>
+               <ng-include src="'/templates/angularRest/mealInCurrentNutritionDay.html'" />
+            </li>       
         </ul>
     </div>
     <div class="panel-footer  clearfix ">
-        <button  class="btn btn-primary pull-right" ng-click="createOrEditMeal()">
-            Dodaj <span class="glyphicon glyphicon-plus"></span>
+        <button  class="btn btn-primary pull-right" ng-click="addEmptyMealToNutritionDay(currentNutritionDay.content)">
+            Dodaj posiłek <span class="glyphicon glyphicon-plus"></span>
         </button>
     </div>
     
     <div class="panel-footer  clearfix ">
-        <button  class="btn btn-primary pull-right" ng-click="createNutritionDay(currentNutritionDay.content)">
-            ZAPISZ DZIEN <span class="glyphicon glyphicon-plus"></span>
+        <button  class="btn btn-primary pull-right" ng-click="saveCurrentNutritionDay(currentNutritionDay)">
+            ZAPISZ DZIEŃ ŻYWIENIOWY <span class="glyphicon glyphicon-plus"></span>
         </button>
     </div>
 </div>

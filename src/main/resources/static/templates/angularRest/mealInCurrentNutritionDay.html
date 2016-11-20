@@ -1,8 +1,12 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3>Posiłek {{currentMeal.content.time}}</h3>
+        <h3>Posiłek {{meal.time}}</h3>
     </div>
     <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-addon">Time</span>
+            <input type="text" class="form-control input-lg" aria-describedby="basic-addon" ng-model="meal.time" />
+        </div>
         <h4>
             <table class="table">
                 <thead>
@@ -18,10 +22,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="eatenFoodProduct in currentMeal.content.eatenFoodProducts">
+                    <tr ng-repeat="eatenFoodProduct in meal.eatenFoodProducts">
                         <td>{{eatenFoodProduct.name}}</td>
                         <td>{{eatenFoodProduct.category}}</td>
-                        <td><input type="number" ng-model="eatenFoodProduct.grams" ng-change="updateEatenFoodProductMacronutrients(eatenFoodProduct)"/></td>
+                        <td><input type="number" ng-model="eatenFoodProduct.grams" ng-change="updateEatenFoodProductAndMealMacronutrients(eatenFoodProduct, meal)"/></td>
                         <td>{{eatenFoodProduct.macronutrients.allCalories| number:1}}</td>
                         <td>
                             {{eatenFoodProduct.macronutrients.proteins.grams| number:1}}  <br/> 
@@ -39,7 +43,7 @@
                             ({{eatenFoodProduct.macronutrients.fats.calories.percentage| number:1}}%) 
                         </td>
                         <td>
-                            <button type="button" ng-click="deleteEatedFoodProductFromCurrentMeal(currentMeal, eatenFoodProduct)" class="btn btn-primary">
+                            <button type="button" ng-click="deleteEatedFoodProductFromMealUpdateMealMacronutrients(eatenFoodProduct, meal)" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-trash"></span> 
                             </button>
                         </td>
@@ -50,22 +54,22 @@
                         <td></td>
                         <td></td>
                         <td>
-                            {{currentMeal.content.macronutrients.allCalories| number:1}}
+                            {{meal.macronutrients.allCalories| number:1}}
                         </td>
                         <td>
-                            {{currentMeal.content.macronutrients.proteins.grams| number:1}} <br/>
-                            {{currentMeal.content.macronutrients.proteins.calories.amount| number:1}}
-                            ({{currentMeal.content.macronutrients.proteins.calories.percentage| number:1}}%)
+                            {{meal.macronutrients.proteins.grams| number:1}} <br/>
+                            {{meal.macronutrients.proteins.calories.amount| number:1}}
+                            ({{meal.macronutrients.proteins.calories.percentage| number:1}}%)
                         </td>
                         <td>
-                            {{currentMeal.content.macronutrients.carbohydrates.grams| number:1}} <br/>
-                            {{currentMeal.content.macronutrients.carbohydrates.calories.amount| number:1}}
-                            ({{currentMeal.content.macronutrients.carbohydrates.calories.percentage| number:1}}%)
+                            {{meal.macronutrients.carbohydrates.grams| number:1}} <br/>
+                            {{meal.macronutrients.carbohydrates.calories.amount| number:1}}
+                            ({{meal.macronutrients.carbohydrates.calories.percentage| number:1}}%)
                         </td>
                         <td>
-                            {{currentMeal.content.macronutrients.fats.grams| number:1}} <br/>
-                            {{currentMeal.content.macronutrients.fats.calories.amount| number:1}}
-                            ({{currentMeal.content.macronutrients.fats.calories.percentage| number:1}}%)
+                            {{meal.macronutrients.fats.grams| number:1}} <br/>
+                            {{meal.macronutrients.fats.calories.amount| number:1}}
+                            ({{meal.macronutrients.fats.calories.percentage| number:1}}%)
                         </td>
                     </tr>
                 </tbody>
@@ -74,14 +78,14 @@
     </div>
 
     <div class="panel-footer  clearfix ">
-        <div class="row">
+       
             <div class="col-md-1">
-                <button  class="btn btn-primary" ng-click="addFoodProductToMeal(currentMeal.foodProductToAdd, currentMeal.content)">
+                <button  class="btn btn-primary" ng-click="addFoodProductToMeal(currentNutritionDay.foodProductToAdd, meal)">
                     Dodaj <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </div>
             <div class="col-md-4">
-                <ui-select ng-model="currentMeal.foodProductToAdd">
+                <ui-select ng-model="currentNutritionDay.foodProductToAdd">
                     <ui-select-match>
                         <span ng-bind="$select.selected.name"></span>
                     </ui-select-match>
@@ -97,28 +101,5 @@
                 </ui-select>
             </div> 
         </div>
-
-
-        <button  class="btn btn-primary pull-right" ng-click="saveCurrentMeal(currentMeal)">
-            Zapisz <span class="glyphicon glyphicon-ok"></span>
-        </button>
-        <button  class="btn btn-primary pull-right">
-            Anuluj <span class="glyphicon glyphicon-remove"></span>
-        </button>
-
-        <div>
-            EDYTOWANY POSIŁEK:
-            {{currentMeal}}
-        </div>
-        <br/>
-        <div>
-            POSIŁEK PO SAVE:
-            {{test.meal}}
-        </div>
-        <br/>
-        <div>
-            PROMISE DATA
-            {{test.promiseData}}
-        </div>
-    </div>
+    
 </div>

@@ -10,6 +10,7 @@
 
     <!-- to równie dobrz by mogło być w sekcji head bez <th:block layout:fragment="script><th:block> i też by dziłało -->
     <th:block layout:fragment="script">
+        <script src="/angularjs/rest/nutritionResourceHandler.js"></script>
         <script src="/angularjs/rest/macronutrientsCalculator.js"></script>
         <script src="/angularjs/rest/rest.js"></script>
     </th:block>
@@ -25,7 +26,7 @@
             </div>
             <div class="row center-block">
                 <div class="col-md-8">
-                    <ng-include src="'/templates/angularRest/mealsList.html'" />
+                    <ng-include src="'/templates/angularRest/currentNutritionDay.html'" />
                 </div>
             </div>
         </div>

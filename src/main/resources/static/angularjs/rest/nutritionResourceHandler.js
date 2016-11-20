@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-angular.module("nutritionResourceModule", ["ngResource"])
-        .factory("nutritionResourceHandler", function ($resource) {
+angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculatorModule"])
+        .factory("nutritionResourceHandler", function ($resource, macronutrientsCalculator) {
             var resourceUrlPrefix = "http://localhost:8080/api";
             var userEmail = "p@p";
             var userId = "1";
@@ -48,12 +48,40 @@ angular.module("nutritionResourceModule", ["ngResource"])
             });
 
             return {
+                getEmptyNutritionDay: function () {
+                    return {
+                        date: "2016-11-11",
+                        meals: []
+                    };
+                },
+                getEmptyMeal: function () {
+                    return {
+                        eatenFoodProducts: [],
+                        time: "12:00:00"
+                    };
+                },
                 getFoodProducts: function () {
                     return foodProductsResource.query();
                 },
                 getMealsForNutritionDay: function (nutritionDay) {
                     return mealResource.query({date: nutritionDay.date});
                 },
+                getMealsSetItInNutritionDayCalculateMacronutrients: function (nutritionDay) {
+                    this.getMealsForNutritionDay(nutritionDay).$promise.then(function (meals) {
+                        macronutrientsCalculator.calculateMacronutrientsInEatenFoodProductsInMeals(meals);
+                        macronutrientsCalculator.sumMealMacronutrientsInMeals(meals);
+                        nutritionDay.meals = meals;
+                        nutritionDay.macronutrients = macronutrientsCalculator.sumNutritionDayMacronutrients(nutritionDay);
+                    });
+                },
+                getNutritionDaysPage: function () {
+                    return nutritionDaysResource.query();
+                },
+                mapNutritionDaysToResource: function (nutritionDays) {
+                    return mapToResource(nutritionDays, nutritionDaysResource);
+                }
+
+
             };
 
         });

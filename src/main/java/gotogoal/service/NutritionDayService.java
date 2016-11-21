@@ -109,6 +109,10 @@ public class NutritionDayService {
     public NutritionDay findOneEagerDeep(Long id) {
         return setMealsEager(findOne(id));
     }
+    
+    public NutritionDayResource findOneAsResourceEagerDeep(Long id){
+        return nutritionDayResourceAssembler.toResource(this.findOneEagerDeep(id));
+    }
 
     public NutritionDay findOneByUserEmailAndDateEager(String userName, LocalDate localDate) {
         NutritionDay nutritionDay = this.findOneByUserEmailAndDate(userName, localDate);

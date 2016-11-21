@@ -75,9 +75,7 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "n
 
             };
 
-            $scope.updateNutritionDay = function(nutritionDay){
-                nutritionResourceHandler.updateNutritionDay(nutritionDay);
-            };
+            
 
             $scope.saveCurrentNutritionDay = function (currentNutritionDay) {
                 if (angular.isDefined(currentNutritionDay.content.id)) {
@@ -92,6 +90,11 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "n
             
             $scope.deleteNutritionDay = function(nutritionDay){
                 nutritionResourceHandler.deleteNutritionDay(nutritionDay);
+            };
+            
+            $scope.updateNutritionDay = function(nutritionDay){
+                nutritionResourceHandler.updateNutritionDay(nutritionDay);
+                 $scope.test.nutritionDay = nutritionDay;
             };
 
             // do dokończenia !!!
@@ -121,24 +124,6 @@ angular.module("restModule", ["ngResource", "macronutrientsCalculatorModule", "n
             $scope.createMeal = function (meal) {
                 new $scope.mealResource(meal).$create(function (meal) {
                     $scope.test.createdMeal = meal;
-                });
-            };
-
-
-
-
-            $scope.deleteMeal = function (meal, nutritionDay) {
-                var findMealIndexFromNutritionDay = function (meal, nutritionDay) {
-                    for (var i = 0; i < nutritionDay.meals.length; i++) {
-                        if (nutritionDay.meals[i].id == meal.id) {
-                            return i;
-                        }
-                    }
-                    return null;
-                };
-                meal.$delete().then(function () {
-                    var index = findMealIndexFromNutritionDay(meal, nutritionDay);
-                    nutritionDay.splice(index, 1);
                 });
             };
 

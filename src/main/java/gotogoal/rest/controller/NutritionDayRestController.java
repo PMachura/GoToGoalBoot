@@ -80,7 +80,7 @@ public class NutritionDayRestController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public NutritionDay create(@RequestBody NutritionDay nutritionDay, @PathVariable String userEmail){
+    public ResponseEntity<NutritionDayResource> create(@RequestBody NutritionDay nutritionDay, @PathVariable String userEmail){
         
         System.out.println("NutritionDay->id " + nutritionDay.getId());
         System.out.println("NutritionDay->date " + nutritionDay.getDate());
@@ -90,10 +90,9 @@ public class NutritionDayRestController {
         }
         
         NutritionDay created = nutritionDayService.create(nutritionDay, userEmail);
-        System.out.println("@@ PRZED FIND ONE");
-        NutritionDay response = nutritionDayService.findOneEagerDeep(created.getId());
-        System.out.println("@@ PRZED RETURN");
-        return response ;
+        NutritionDayResource response = nutritionDayService.findOneAsResourceEagerDeep(created.getId());
+    
+        return new ResponseEntity<NutritionDayResource>(response, HttpStatus.CREATED) ;
     }
     
     @RequestMapping(value = "/{date}", method = RequestMethod.DELETE)

@@ -8,7 +8,7 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
         .factory("nutritionResourceHandler", function ($resource, macronutrientsCalculator) {
             var resourceUrlPrefix = "http://localhost:8080/api";
             var userEmail = "p@p";
-            var userId = "1";
+            var userId = 1;
             var mapToResource = function (data, resourceClass, propertyName) {
                 if (angular.isDefined(propertyName)) {
                     for (var i = 0; i < data.length; i++) {
@@ -27,11 +27,11 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
 
 
             var foodProductsResource = $resource(resourceUrlPrefix + "/foodProducts/:id", {id: "@id"});
-            var eatenFoodProducts = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date/meals/:mealId/mealsFoodProducts/:id",
+            var eatenFoodProducts = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:nutritionDayId/meals/:mealId/mealsFoodProducts/:id",
                     {email: userEmail, id: "@relationEntityId"});
 
-            var mealResource = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date/meals/:id",
-                    {email: userEmail, date: "@nutritionDay.date", id: "@id"},
+            var mealResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:nutritionDayId/meals/:id",
+                    {userId: userId, nutritionDayId: "@nutritionDay.id", id: "@id"},
                     {
                         create: {
                             method: "POST"
@@ -41,7 +41,7 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
                         }
                     });
 
-            var nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:email/nutritionDays/:date", {email: userEmail, date: "@date"}, {
+            var nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:id", {userId: userId, id: "@id"}, {
                 query: {
                     isArray: false
                 },
@@ -73,7 +73,7 @@ angular.module("nutritionResourceModule", ["ngResource", "macronutrientsCalculat
                     return foodProductsResource.query();
                 },
                 getMealsForNutritionDay: function (nutritionDay) {
-                    return mealResource.query({date: nutritionDay.date});
+                    return mealResource.query({nutritionDayId: nutritionDay.id});
                 },
                 getMealsSetItInNutritionDayCalculateMacronutrients: function (nutritionDay) {
                     this.getMealsForNutritionDay(nutritionDay).$promise.then(function (meals) {

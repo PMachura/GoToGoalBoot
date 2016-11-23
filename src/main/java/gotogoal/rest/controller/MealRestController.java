@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Przemek
  */
 @RestController
-@RequestMapping("/api/users/{userEmail}/nutritionDays/{nutritionDayDate}/meals")
+@RequestMapping("/api/users/{userId}/nutritionDays/{nutritionDayId}/meals")
 public class MealRestController {
 
     MealService mealService;
@@ -48,27 +48,9 @@ public class MealRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<MealResource>> findAll(@PathVariable String userEmail, @PathVariable LocalDate nutritionDayDate) {
-        return new ResponseEntity(mealService.findAllByUserEmailAndNutritionDayDateAsResourceEager(userEmail, nutritionDayDate), HttpStatus.OK);
+    public ResponseEntity<Collection<MealResource>> findAll(@PathVariable Long userId, @PathVariable Long nutritionDayId) {
+        Collection<MealResource> response = mealService.mapToResource(mealService.findByUserIdAndNutritionDayIdEager(userId, nutritionDayId));
+        return new ResponseEntity(response, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Meal> update(@RequestBody Meal meal) {
-
-        Meal updated = mealService.update(meal);      
-        return new ResponseEntity<Meal>((mealService.findOneEager(updated.getId())), HttpStatus.ACCEPTED);
-    }
-    
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Meal> create(@RequestBody Meal meal) {
-        Meal created = mealService.create(meal);      
-        return new ResponseEntity<Meal>((mealService.findOneEager(created.getId())), HttpStatus.ACCEPTED);
-    }
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable Long id){
-        mealService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
+   
 }

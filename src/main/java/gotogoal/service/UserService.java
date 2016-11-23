@@ -32,10 +32,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findOne(Long id) throws EntityNotFoundException {
+    public User findOneWithException(Long id) throws EntityNotFoundException {
         if (!userRepository.exists(id)) {
             throw new EntityNotFoundException("User with id " + id + " does not exists");
         }
+        return userRepository.findOne(id);
+    }
+    
+    public User findOne(Long id){
         return userRepository.findOne(id);
     }
 

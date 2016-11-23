@@ -25,7 +25,10 @@
                     <tr ng-repeat="eatenFoodProduct in meal.eatenFoodProducts">
                         <td>{{eatenFoodProduct.name}}</td>
                         <td>{{eatenFoodProduct.category}}</td>
-                        <td><input type="number" ng-model="eatenFoodProduct.grams" ng-change="updateEatenFoodProductAndMealMacronutrients(eatenFoodProduct, meal)"/></td>
+                        <td>
+                            <input type="number" ng-model="eatenFoodProduct.grams" 
+                                   ng-change="updateEatenFoodProductMealNutritionDayMacronutrients(eatenFoodProduct, meal, currentNutritionDay.content)"/>
+                        </td>
                         <td>{{eatenFoodProduct.macronutrients.allCalories| number:1}}</td>
                         <td>
                             {{eatenFoodProduct.macronutrients.proteins.grams| number:1}}  <br/> 
@@ -49,7 +52,7 @@
                         </td>
 
                     </tr>
-                    <tr  class="active">
+                    <tr  class="info">
                         <td></td>
                         <td></td>
                         <td></td>
@@ -78,28 +81,34 @@
     </div>
 
     <div class="panel-footer  clearfix ">
-       
-            <div class="col-md-1">
-                <button  class="btn btn-primary" ng-click="addFoodProductToMeal(currentNutritionDay.foodProductToAdd, meal)">
-                    Dodaj <span class="glyphicon glyphicon-plus"></span>
-                </button>
-            </div>
-            <div class="col-md-4">
-                <ui-select ng-model="currentNutritionDay.foodProductToAdd">
-                    <ui-select-match>
-                        <span ng-bind="$select.selected.name"></span>
-                    </ui-select-match>
-                    <ui-select-choices repeat="item in (foodProducts | filter: $select.search) track by item.id">
-                        <div ng-bind="item.name"></div>
-                        <small>
-                            <b>{{item.calories}}</b>
-                            (<b>B:</b> {{item.proteins}})
-                            (<b>W:</b> {{item.carbohydrates}})
-                            (<b>T:</b> {{item.fats}})
-                        </small>
-                    </ui-select-choices>
-                </ui-select>
-            </div> 
+
+        <div class="col-md-2">
+            <button  class="btn btn-primary" ng-click="addFoodProductToMealCalculateMacronutrients(currentNutritionDay.foodProductToAdd, meal, currentNutritionDay.content)">
+                Dodaj produkt
+            </button>
         </div>
-    
+        <div class="col-md-4">
+            <ui-select ng-model="currentNutritionDay.foodProductToAdd">
+                <ui-select-match>
+                    <span ng-bind="$select.selected.name"></span>
+                </ui-select-match>
+                <ui-select-choices repeat="item in (foodProducts | filter: $select.search) track by item.id">
+                    <div ng-bind="item.name"></div>
+                    <small>
+                        <b>{{item.calories}}</b>
+                        (<b>B:</b> {{item.proteins}})
+                        (<b>W:</b> {{item.carbohydrates}})
+                        (<b>T:</b> {{item.fats}})
+                    </small>
+                </ui-select-choices>
+            </ui-select>
+        </div> 
+        <div class="col-md-6">
+            <button  class="btn-lg btn-primary pull-right" ng-click="deleteMealFromNutritionDayUpdateMacronutrients(currentNutritionDay.content, meal)">
+                Usuń 
+            </button>
+        </div>
+
+    </div>
+
 </div>

@@ -117,8 +117,8 @@ class NutritionDayDeserializer extends JsonDeserializer<NutritionDay> {
         nutritionDay.setDate(nutritionDayDate);
 
         User user = new User();
-        String userEmail = nutritionDayNode.has("user") ? nutritionDayNode.get("user").textValue() : null;
-        user.setEmail(userEmail);
+        Long userId = nutritionDayNode.has("user") ? nutritionDayNode.get("user").numberValue().longValue() : null;
+        user.setId(userId);
         nutritionDay.setUser(user);
 
         Collection<Meal> meals = mealsDeserialize(nutritionDayNode);
@@ -135,7 +135,7 @@ class UserAsEmailSerializer extends JsonSerializer<User> {
 
     @Override
     public void serialize(User value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
-        gen.writeString(value.getEmail());
+        gen.writeNumber(value.getId());
     }
 }
 

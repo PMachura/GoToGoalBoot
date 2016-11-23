@@ -38,13 +38,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Przemek
  */
 @RestController
-@RequestMapping("/api/users/{userEmail}/nutritionDays")
+@RequestMapping("/api/users/{userId}/nutritionDays")
 public class NutritionDayRestController {
 
     NutritionDayService nutritionDayService;
     MealService mealService;
     NutritionDayResourceAssembler nutritionDayResourceAssembler;
-   
+
     @Autowired
     public NutritionDayRestController(NutritionDayService nutritionDiaryService, MealService mealService,
             NutritionDayResourceAssembler nutritionDayResourceAssembler) {
@@ -52,27 +52,21 @@ public class NutritionDayRestController {
         this.mealService = mealService;
         this.nutritionDayResourceAssembler = nutritionDayResourceAssembler;
     }
-   
-     
-    //Tutaj dla size = 1 trzeba w serwisie przerobić, żeby traktowało jako pojedyncy obiekt i szukało po dacie o ile jest 
+
     @RequestMapping(method = RequestMethod.GET)
-    public Page<NutritionDay> findAll(
-            @PathVariable String userEmail,
-            @RequestParam(value="date", required = false) LocalDate date,
-            @RequestParam(value="page", required = false, defaultValue = "0") int page,
-            @RequestParam(value="size", required = false, defaultValue = "10") int size,
-            @RequestParam(value="sort", required = false, defaultValue = "desc") String sort){  
-        return this.nutritionDayService.findAllByUserEmailAndDateAsPageLazy
-        (userEmail, date, new PageRequest(page,size, new Sort(Sort.Direction.fromStringOrNull(sort), "date")));
+    public ResponseEntity<Page<NutritionDayResource>> findAll(
+            @PathVariable Long userId,
+            @RequestParam(value = "date", required = false) LocalDate date,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sort", required = false, defaultValue = "desc") String sort) {
+
+        Page<NutritionDayResource> nutritionDayResourcePage = 
+                nutritionDayService.mapToResource(nutritionDayService.findAllByUserIdEager(userId, new PageRequest(page, size, new Sort(Sort.Direction.fromStringOrNull(sort), "date"))));
+        
+        return new ResponseEntity(nutritionDayResourcePage, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<NutritionDayResource> findOne(
-            @PathVariable String userEmail,
-            @PathVariable Long id) {
-        return new ResponseEntity<NutritionDayResource>(nutritionDayService.findOneEagerAsResource(id), HttpStatus.OK);
-    }
-    
     /**
      *
      * @param nutritionDay
@@ -80,30 +74,31 @@ public class NutritionDayRestController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<NutritionDayResource> create(@RequestBody NutritionDay nutritionDay, @PathVariable String userEmail){
-        
-        System.out.println("NutritionDay->id " + nutritionDay.getId());
-        System.out.println("NutritionDay->date " + nutritionDay.getDate());
-        System.out.println("NutritionDay->userEmail " + nutritionDay.getUser().getEmail());
-        for(Meal meal : nutritionDay.getMeals()){
+    public ResponseEntity<NutritionDayResource> create(@RequestBody NutritionDay nutritionDay, @PathVariable Long userId) {
+
+        for (Meal meal : nutritionDay.getMeals()) {
             mealService.temporaryDebug("", meal);
         }
-        
-        NutritionDay created = nutritionDayService.create(nutritionDay, userEmail);
-        NutritionDayResource response = nutritionDayService.findOneAsResourceEagerDeep(created.getId());
-    
-        return new ResponseEntity<NutritionDayResource>(response, HttpStatus.CREATED) ;
+
+        NutritionDay created = nutritionDayService.create(nutritionDay, userId);
+        NutritionDayResource response = nutritionDayService.mapToResource(nutritionDayService.findOneEagerDeep(created.getId()));
+
+        return new ResponseEntity<NutritionDayResource>(response, HttpStatus.CREATED);
     }
-    
-    @RequestMapping(value = "/{date}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable String userEmail, @PathVariable LocalDate date){
-        nutritionDayService.delete(userEmail, date);
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable Long userId, @PathVariable Long id) {
+        nutritionDayService.delete(userId, id);
         return new ResponseEntity(HttpStatus.OK);
     }
-    
-    @RequestMapping(value = "/{date}", method = RequestMethod.PUT)
-    public NutritionDay update(@RequestBody NutritionDay nutritionDay){
-       return nutritionDayService.update(nutritionDay);
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<NutritionDayResource> update(@RequestBody NutritionDay nutritionDay,
+            @PathVariable Long userId,
+            @PathVariable Long id) {
+        NutritionDay updated = nutritionDayService.update(nutritionDay, userId, id);
+        NutritionDayResource response = nutritionDayService.mapToResource(nutritionDayService.findOneEagerDeep(updated.getId()));
+        return new ResponseEntity<NutritionDayResource>(response, HttpStatus.OK);
     }
-    
+
 }

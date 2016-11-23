@@ -5,11 +5,12 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 
+
 <div class="panel panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading clearfix">
         <h2>Dzienniki żywieniowe
-            <button type="button" class="btn-primary pull-right" ng-click="createOrEditNutritionDay()">
-                <span class="glyphicon glyphicon-plus "></span> 
+            <button type="button" class="btn-lg btn-primary pull-right" ng-click="createOrEditNutritionDay()">
+                Dodaj dziennik</span> 
             </button>
         </h2>
     </div>
@@ -28,12 +29,12 @@ and open the template in the editor.
                 <h3>{{nutritionDay.date}}</h3>
                 <h4>
                     <b>Kalorie</b> {{nutritionDay.macronutrients.allCalories| number:1}}
-                    <span>
-                        <b> Białka </b>
-                        {{nutritionDay.macronutrients.proteins.grams| number:1}} g 
-                        {{nutritionDay.macronutrients.proteins.calories.amount| number:1}} 
-                        ({{nutritionDay.macronutrients.proteins.calories.percentage| number:1}}%) kcal 
-                    </span>
+
+                    <b> Białka </b>
+                    {{nutritionDay.macronutrients.proteins.grams| number:1}} g 
+                    {{nutritionDay.macronutrients.proteins.calories.amount| number:1}} 
+                    ({{nutritionDay.macronutrients.proteins.calories.percentage| number:1}}%) kcal 
+
                     <b>Węglowodany</b> 
                     {{nutritionDay.macronutrients.carbohydrates.grams| number:1}} g 
                     {{nutritionDay.macronutrients.carbohydrates.calories.amount| number:1}} 
@@ -44,15 +45,21 @@ and open the template in the editor.
                     {{nutritionDay.macronutrients.fats.calories.amount| number:1}} 
                     ({{nutritionDay.macronutrients.fats.calories.percentage| number:1}}%) kcal 
                 </h4>
-                <button type="button" ng-click="createOrEditNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
-                    <span class="glyphicon glyphicon-search"></span> 
-                </button>
-                <button type="button" class="btn btn-primary pull-right">
-                    <span class="glyphicon glyphicon-pencil"></span> 
-                </button>
+                <div id="nutritionDayMeals{{nutritionDay.id}}" class="collapse">
+                    <div class="" ng-repeat="meal in nutritionDay.meals">
+                        <ng-include src="'/templates/angularRest/mealInMealsList.html'" />
+                    </div>       
+                </div>
                 <button type="button" ng-click="deleteNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
                     <span class="glyphicon glyphicon-trash"></span> 
                 </button>
+                <button type="button" ng-click="createOrEditNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                </button>
+                <a href="#nutritionDayMeals{{nutritionDay.id}}" class="btn btn-primary pull-right " data-toggle="collapse">
+                    <span class="glyphicon glyphicon-search"></span> 
+                </a>
+
             </li>
         </ul>
     </div>

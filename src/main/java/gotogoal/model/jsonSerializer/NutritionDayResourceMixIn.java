@@ -6,6 +6,9 @@
 package gotogoal.model.jsonSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import gotogoal.model.FoodProduct;
+import gotogoal.model.NutritionDay;
 import gotogoal.rest.resource.NutritionDayResource;
 
 /**
@@ -14,5 +17,7 @@ import gotogoal.rest.resource.NutritionDayResource;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class NutritionDayResourceMixIn extends NutritionDayResource {
-    
+    @Override
+    @JsonUnwrapped
+    abstract public NutritionDay getNutritionDay();
 }

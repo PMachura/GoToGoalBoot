@@ -63,12 +63,12 @@ public class UserRestController {
     // w odpowiedzi xml jest <UserResource> ...(dane Usera) ... </UserResource>
     @RequestMapping(value = "/userResource/{userId}", method = RequestMethod.GET)
     public UserResource show(@PathVariable Long userId) throws EntityNotFoundException {
-        return new UserResource(userService.findOne(userId));
+        return new UserResource(userService.findOneWithException(userId));
     }
     
     @RequestMapping(value = "/userResourceFromAssembler/{userId}", method = RequestMethod.GET)
     public UserResource show3(@PathVariable Long userId) throws EntityNotFoundException {
-        UserResource userResource = new UserResourceAssembler().toResource(userService.findOne(userId));
+        UserResource userResource = new UserResourceAssembler().toResource(userService.findOneWithException(userId));
         return userResource;
     }
 
@@ -77,7 +77,7 @@ public class UserRestController {
     public ResponseEntity<User> show2(@PathVariable Long userId) throws EntityNotFoundException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        UserResource userResource = new UserResource(userService.findOne(userId));
+        UserResource userResource = new UserResource(userService.findOneWithException(userId));
         Link linkUser = userResource.getLink("selfByController");
         Link linkMethod = userResource.getLink("selfByControllerMethod");
         httpHeaders.setLocation(URI.create(linkUser.getHref()));
@@ -89,7 +89,7 @@ public class UserRestController {
     public ResponseEntity<UserResource> show4(@PathVariable Long userId) throws EntityNotFoundException {
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        UserResource userResource = new UserResource(userService.findOne(userId));
+        UserResource userResource = new UserResource(userService.findOneWithException(userId));
         Link linkUser = userResource.getLink("selfByController");
         Link linkMethod = userResource.getLink("selfByControllerMethod");
         httpHeaders.setLocation(URI.create(linkUser.getHref()));

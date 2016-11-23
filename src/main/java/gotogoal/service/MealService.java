@@ -52,9 +52,20 @@ public class MealService {
         return mealRepository.findByNutritionDayUserEmailAndNutritionDayDate(userEmail, nutritionDayDate);
     }
 
+    private Collection<Meal> findByUserIdAndNutritionDayId(Long userId, Long nutritionDayId) {
+        return mealRepository.findByNutritionDayUserIdAndNutritionDayId(userId, nutritionDayId);
+    }
+
     private Meal setMealFoodProduct(Meal meal) {
         meal.setMealsFoodProducts(mealFoodProductService.findByMealId(meal.getId()));
         return meal;
+    }
+
+    private Collection<Meal> setMealFoodProductToNull(Collection<Meal> meals) {
+        meals.forEach((Meal meal) -> {
+            meal.setMealsFoodProducts(null);
+        });
+        return meals;
     }
 
     private Collection<Meal> setMealFoodProduct(Collection<Meal> meals) {
@@ -71,10 +82,14 @@ public class MealService {
         return meal;
     }
 
-    private Collection<MealResource> mapToResource(Collection<Meal> meals) {
+    public Collection<MealResource> mapToResource(Collection<Meal> meals) {
         return Arrays.asList(meals.stream()
                 .map(mealResourceAssembler::toResource)
                 .toArray(MealResource[]::new));
+    }
+    
+    public MealResource mapToResource(Meal meal) {
+        return mealResourceAssembler.toResource(meal);
     }
 
     private Meal save(Meal meal) {
@@ -131,9 +146,9 @@ public class MealService {
         mealFoodProductService.save(created.getMealsFoodProducts());
         return created;
     }
-    
-    @Transactional 
-    Collection<Meal> create(Collection<Meal> meals){
+
+    @Transactional
+    Collection<Meal> create(Collection<Meal> meals) {
         Collection<Meal> created = new ArrayList<Meal>();
         meals.forEach((Meal meal) -> created.add(this.create(meal)));
         return created;
@@ -153,50 +168,63 @@ public class MealService {
         Meal updated = save(meal);
         Collection<MealFoodProduct> savedMealsFoodProducts = mealFoodProductService.save(meal.getMealsFoodProducts());
         updated.setMealsFoodProducts((List<MealFoodProduct>) savedMealsFoodProducts);
-        mealFoodProductService.deleteByMealIdInAndIdNotIn(meal.getId(), getMealFoodProductIds(meal));
+        if (getMealFoodProductIds(meal).isEmpty()) {
+            mealFoodProductService.deleteByMealId(meal.getId());
+        } else {
+            mealFoodProductService.deleteByMealIdInAndIdNotIn(meal.getId(), getMealFoodProductIds(meal));
+        }
+
         return updated;
     }
-    
+
     @Transactional
-    public Collection<Meal> update(Collection<Meal> meals){
-      Collection<Meal> created  = new ArrayList<Meal>();
-      meals.forEach((Meal meal) -> created.add(update(meal)));
-      return created;
-    };
-    
-    
+    public Collection<Meal> update(Collection<Meal> meals) {
+        Collection<Meal> created = new ArrayList<Meal>();
+        meals.forEach((Meal meal) -> created.add(update(meal)));
+        return created;
+    }
 
     @Transactional
     public void delete(Long mealId) {
         mealFoodProductService.deleteByMealId(mealId);
         mealRepository.delete(mealId);
     }
-    
+
     @Transactional
-    public void deleteByNutritionDayId(Long nutritionDayId){
+    public void deleteByNutritionDayId(Long nutritionDayId) {
         mealFoodProductService.deleteByMealNutritionDayId(nutritionDayId);
         mealRepository.deleteByNutritionDayId(nutritionDayId);
     }
-    
+
     @Transactional
-    public void deleteByNutritionDayIdInAndIdNotId(Long nutritionDayId, Collection<Long> melsIds){
+    public void deleteByNutritionDayIdInAndIdNotId(Long nutritionDayId, Collection<Long> melsIds) {
         mealFoodProductService.deleteByMealNutritionDayIdInAndMealIdNotIn(nutritionDayId, melsIds);
         mealRepository.deleteByNutritionDayIdInAndIdNotIn(nutritionDayId, melsIds);
     }
-            
 
-    public Collection<Meal> findAllByUserEmailAndNutritionDayDateEager(String userEmail, LocalDate nutritionDayDate) {
+    public Collection<Meal> findByUserEmailAndNutritionDayDateEager(String userEmail, LocalDate nutritionDayDate) {
         Collection<Meal> meals = findAll(userEmail, nutritionDayDate);
         meals = setMealFoodProduct(meals);
         return meals;
     }
 
-    public Collection<MealResource> findAllByUserEmailAndNutritionDayDateAsResourceEager(String userEmail, LocalDate nutritionDayDate) {
-        return mapToResource(findAllByUserEmailAndNutritionDayDateEager(userEmail, nutritionDayDate));
+    public Collection<Meal> findByUserIdAndNutritionDayIdEager(Long userId, Long nutritionDayId) {
+        Collection<Meal> meals = findByUserIdAndNutritionDayId(userId, nutritionDayId);
+        meals = setMealFoodProduct(meals);
+        return meals;
     }
 
+//    public Collection<MealResource> findAllByUserEmailAndNutritionDayDateAsResourceEager(String userEmail, LocalDate nutritionDayDate) {
+//        return mapToResource(findByUserEmailAndNutritionDayDateEager(userEmail, nutritionDayDate));
+//    }
+
+//    public Collection<MealResource> findByUserIdAndNutritionDayIdAsResourceEager(Long userId, Long nutritionDayId) {
+//        return mapToResource(findByUserIdAndNutritionDayIdEager(userId, nutritionDayId));
+//    }
+
     public Collection<Meal> findAllByNutritionDayIdLazy(Long nutritionDayId) {
-        return mealRepository.findByNutritionDayId(nutritionDayId);
+        Collection<Meal> meals = mealRepository.findByNutritionDayId(nutritionDayId);
+        return setMealFoodProductToNull(meals);
     }
 
     public Collection<Meal> findAllByNutritionDayIdEager(Long nutritionDayId) {
@@ -205,8 +233,8 @@ public class MealService {
         return meals;
     }
 
-    public Collection<MealResource> findAllByNutritionDayIdAsResourceEager(Long nutritionDayId) {
-        return mapToResource(findAllByNutritionDayIdEager(nutritionDayId));
-    }
+//    public Collection<MealResource> findAllByNutritionDayIdAsResourceEager(Long nutritionDayId) {
+//        return mapToResource(findAllByNutritionDayIdEager(nutritionDayId));
+//    }
 
 }

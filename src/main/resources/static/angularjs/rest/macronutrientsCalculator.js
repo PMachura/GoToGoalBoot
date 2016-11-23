@@ -170,6 +170,7 @@ angular.module("macronutrientsCalculatorModule", [])
                     }
                     return eatenFoodProducts;
                 },
+                //Zmienić nazwę na ...InEatenFoodProductsFromMels
                 calculateMacronutrientsInEatenFoodProductsInMeals: function (meals) {
                     for (var i = 0; i < meals.length; i++) {
                         this.calculateMacronutrientsInEatenFoodProducts(meals[i].eatenFoodProducts);
@@ -180,6 +181,11 @@ angular.module("macronutrientsCalculatorModule", [])
                     for (var i = 0; i < meals.length; i++) {
                         meals[i].macronutrients = this.sumMealMacronutrients(meals[i]);
                     }
+                },
+                calculateMacronutrientsInNutritionDay: function (nutritionDay) {
+                    this.calculateMacronutrientsInEatenFoodProductsInMeals(nutritionDay.meals);
+                    this.sumMealMacronutrientsInMeals(nutritionDay.meals);
+                    nutritionDay.macronutrients = this.sumNutritionDayMacronutrients(nutritionDay);
                 }
             };
         });

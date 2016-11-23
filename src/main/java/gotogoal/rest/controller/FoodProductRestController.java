@@ -10,6 +10,7 @@ import gotogoal.rest.resource.FoodProductResource;
 import gotogoal.rest.resource.assembler.FoodProductAssembler;
 import gotogoal.service.FoodProductService;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,43 +45,15 @@ public class FoodProductRestController {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public FoodProductResource show(@PathVariable Long id){
-        FoodProductResource foodProductResource =  foodProductAssembler.toResource(foodProductService.findOne(id));
+        FoodProductResource foodProductResource =  foodProductService.mapToResource(foodProductService.findOne(id));
         return foodProductResource;
     }
     
     @RequestMapping(method = RequestMethod.GET)
-    public List<FoodProductResource> findAll(){ // tu było Resources<FoodProductResource>
-        List<FoodProductResource> foodProductResourceList = foodProductService.findAll()
-                .stream()
-                .map(foodProduct -> foodProductAssembler.toResource(foodProduct))
-                .collect(Collectors.toList());
+    public ResponseEntity<Collection<FoodProductResource>> findAll(){ 
+        Collection<FoodProductResource> foodProductsResources = foodProductService.mapToResource(foodProductService.findAll());
+         
+        return new ResponseEntity(foodProductsResources, HttpStatus.OK);
+    }
         
-        //return new Resources<FoodProductResource>(foodProductResourceList);
-        return foodProductResourceList;
-    }
-    
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<FoodProduct> create(@RequestBody FoodProduct foodProduct){
-        
-        FoodProduct entity = foodProductService.save(foodProduct);
-        FoodProductResource foodProductResource = foodProductAssembler.toResource(entity);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        Link linkForCreatedEntity = foodProductResource.getLink("self");
-        httpHeaders.setLocation(URI.create(linkForCreatedEntity.getHref()));
-        return new ResponseEntity<FoodProduct>(entity, httpHeaders, HttpStatus.CREATED);
-    }
-    
-   
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public ResponseEntity<FoodProduct> update(@RequestBody FoodProduct foodProduct){
-        foodProductService.save(foodProduct);
-        return new ResponseEntity<>(foodProduct, HttpStatus.OK);
-    }
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<FoodProduct> delete(@PathVariable Long id){
-        foodProductService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    
 }

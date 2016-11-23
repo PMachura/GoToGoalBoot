@@ -6,6 +6,7 @@
 package gotogoal.rest.resource.assembler;
 
 import gotogoal.model.NutritionDay;
+import gotogoal.rest.controller.MealRestController;
 import gotogoal.rest.controller.NutritionDayRestController;
 import gotogoal.rest.resource.NutritionDayResource;
 import java.time.LocalDate;
@@ -15,10 +16,7 @@ import org.springframework.data.domain.Page;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  *
@@ -59,7 +57,8 @@ public class NutritionDayResourceAssembler extends ResourceAssemblerSupport<Nutr
 
     @Override
     public NutritionDayResource toResource(NutritionDay nutritionDay) {
-        NutritionDayResource nutritionDayResource = createResourceWithId(nutritionDay.getId(), nutritionDay);
+        NutritionDayResource nutritionDayResource = new NutritionDayResource(nutritionDay);
+        nutritionDayResource.add(linkTo(NutritionDayRestController.class,nutritionDay.getUser().getId()).slash(nutritionDay.getId()).withSelfRel());
         return nutritionDayResource;
     }
 

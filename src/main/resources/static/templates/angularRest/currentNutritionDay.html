@@ -16,21 +16,37 @@ and open the template in the editor.
             <span class="input-group-addon">Date</span>
             <input type="text" class="form-control" aria-describedby="basic-addon" ng-model="currentNutritionDay.content.date" />
         </div>
-        <ul class="list-group">
-            <li class="list-group-item clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
-               <ng-include src="'/templates/angularRest/mealInCurrentNutritionDay.html'" />
-            </li>       
-        </ul>
+
+        <div class="clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
+            <ng-include src="'/templates/angularRest/mealInCurrentNutritionDay.html'" />
+        </div>       
     </div>
     <div class="panel-footer  clearfix ">
-        <button  class="btn btn-primary pull-right" ng-click="addEmptyMealToNutritionDay(currentNutritionDay.content)">
-            Dodaj posiłek <span class="glyphicon glyphicon-plus"></span>
+        <h4>  
+            <b>Kalorie</b> {{currentNutritionDay.content.macronutrients.allCalories| number:1}}
+
+            <b> Białka </b>
+            {{currentNutritionDay.content.macronutrients.proteins.grams| number:1}} g 
+            {{currentNutritionDay.content.macronutrients.proteins.calories.amount| number:1}} 
+            ({{currentNutritionDay.content.macronutrients.proteins.calories.percentage| number:1}}%) kcal 
+
+            <b>Węglowodany</b> 
+            {{currentNutritionDay.content.macronutrients.carbohydrates.grams| number:1}} g 
+            {{currentNutritionDay.content.macronutrients.carbohydrates.calories.amount| number:1}} 
+            ({{currentNutritionDay.content.macronutrients.carbohydrates.calories.percentage| number:1}}%) kcal 
+
+            <b>Tłuszcze</b>  
+            {{currentNutritionDay.content.macronutrients.fats.grams| number:1}} g
+            {{currentNutritionDay.content.macronutrients.fats.calories.amount| number:1}} 
+            ({{currentNutritionDay.content.macronutrients.fats.calories.percentage| number:1}}%) kcal
+        </h4>
+        <button class="btn-lg btn-primary pull-right" ng-click="saveCurrentNutritionDay(currentNutritionDay)">
+            Zapisz dziennik
         </button>
-    </div>
-    
-    <div class="panel-footer  clearfix ">
-        <button  class="btn btn-primary pull-right" ng-click="saveCurrentNutritionDay(currentNutritionDay)">
-            ZAPISZ DZIEŃ ŻYWIENIOWY <span class="glyphicon glyphicon-plus"></span>
+        <button  class="btn-lg btn-primary pull-right" ng-click="addEmptyMealToNutritionDay(currentNutritionDay.content)">
+            Dodaj posiłek
         </button>
+
     </div>
+
 </div>

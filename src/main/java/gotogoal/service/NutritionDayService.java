@@ -5,6 +5,7 @@
  */
 package gotogoal.service;
 
+import gotogoal.exception.EntityDuplicateException;
 import gotogoal.model.NutritionDay;
 import gotogoal.model.Meal;
 import gotogoal.model.MealFoodProduct;
@@ -48,11 +49,17 @@ public class NutritionDayService {
      * *********************************** HELPERS FUNCTION
      * *****************************
      */
+    private void validateUniqueness(Long userId, LocalDate date) {
+        if (nutritionDayRepository.findByUserIdAndDate(userId, date) != null) {
+            throw new EntityDuplicateException("Nutrition Day with date: " + date + " already exists for user: " + userId);
+        }
+    }
+
     private NutritionDay findOne(Long id) {
         return nutritionDayRepository.findOne(id);
     }
 
-    private NutritionDay findOneByUserEmailAndDate(String userName, LocalDate localDate) {
+    private NutritionDay findByUserEmailAndDate(String userName, LocalDate localDate) {
         return nutritionDayRepository.findByUserEmailAndDate(userName, localDate);
     }
 
@@ -70,13 +77,13 @@ public class NutritionDayService {
         return nutritionDay;
     }
 
-    private NutritionDay setMealsEager(NutritionDay nutritionDay) {
-        nutritionDay.setMeals((List<Meal>) mealService.findAllByNutritionDayIdEager(nutritionDay.getId()));
-        return nutritionDay;
+    private Collection<NutritionDay> setMealsLazy(Collection<NutritionDay> nutritionDays) {
+        nutritionDays.forEach((NutritionDay nutritionDay) -> setMealsLazy(nutritionDay));
+        return nutritionDays;
     }
 
-    private NutritionDay setMealsToNull(NutritionDay nutritionDay) {
-        nutritionDay.setMeals(null);
+    private NutritionDay setMealsEager(NutritionDay nutritionDay) {
+        nutritionDay.setMeals((List<Meal>) mealService.findAllByNutritionDayIdEager(nutritionDay.getId()));
         return nutritionDay;
     }
 
@@ -102,6 +109,14 @@ public class NutritionDayService {
     /**
      * *****************************************************************************************
      */
+    public NutritionDayResource mapToResource(NutritionDay nutritionDay) {
+        return nutritionDayResourceAssembler.toResource(nutritionDay);
+    }
+
+    public Page<NutritionDayResource> mapToResource(Page<NutritionDay> nutritionDayPage) {
+        return nutritionDayPage.map(nutritionDayResourceAssembler::toResource);
+    }
+
     public NutritionDay findOneEager(Long id) {
         return setMealsLazy(findOne(id));
     }
@@ -109,93 +124,59 @@ public class NutritionDayService {
     public NutritionDay findOneEagerDeep(Long id) {
         return setMealsEager(findOne(id));
     }
-    
-    public NutritionDayResource findOneAsResourceEagerDeep(Long id){
-        return nutritionDayResourceAssembler.toResource(this.findOneEagerDeep(id));
-    }
 
+//    public NutritionDayResource findOneAsResourceEagerDeep(Long id) {
+//        return nutritionDayResourceAssembler.toResource(this.findOneEagerDeep(id));
+//    }
     public NutritionDay findOneByUserEmailAndDateEager(String userName, LocalDate localDate) {
-        NutritionDay nutritionDay = this.findOneByUserEmailAndDate(userName, localDate);
+        NutritionDay nutritionDay = this.findByUserEmailAndDate(userName, localDate);
         Collection<Meal> meals = mealService.findAllByNutritionDayIdLazy(nutritionDay.getId());
         nutritionDay.setMeals((List<Meal>) meals);
         return nutritionDay;
     }
 
-    public NutritionDayResource findOneEagerAsResource(Long id) {
-        return nutritionDayResourceAssembler.toResource(this.findOneEager(id));
-    }
-
-    public NutritionDayResource findOneByUserEmailAndDateAsResourceEager(String userName, LocalDate localDate) {
-        return nutritionDayResourceAssembler.toResource(this.findOneByUserEmailAndDateEager(userName, localDate));
-    }
-
+//    public NutritionDayResource findOneEagerAsResource(Long id) {
+//        return nutritionDayResourceAssembler.toResource(this.findOneEager(id));
+//    }
+//    public NutritionDayResource findOneByUserEmailAndDateAsResourceEager(String userName, LocalDate localDate) {
+//        return nutritionDayResourceAssembler.toResource(this.findOneByUserEmailAndDateEager(userName, localDate));
+//    }
     public Page<NutritionDay> findAllByUserEmailAndDateAsPageLazy(String userEmail, LocalDate localDate, Pageable pageable) {
         Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserEmail(userEmail, pageable);
         setMealsToNull(nutritionDayPage.getContent());
         return nutritionDayPage;
     }
 
+    public Page<NutritionDay> findAllByUserIdEager(Long userId, Pageable pageable) {
+        Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserId(userId, pageable);
+        setMealsLazy(nutritionDayPage.getContent());
+        return nutritionDayPage;
+    }
+
     @Transactional
-    public NutritionDay create(NutritionDay nutritionDay, String userEmail) {
-        nutritionDay.setUser(userService.findByEmail(userEmail));
-
+    public NutritionDay create(NutritionDay nutritionDay, Long userId) {
+        validateUniqueness(userId, nutritionDay.getDate());
+        nutritionDay.setUser(userService.findOne(userId));
         NutritionDay created = nutritionDayRepository.save(nutritionDay);
-
-        System.out.println("Po zapisie dnia");
-        System.out.println("NutritionDay->id " + created.getId());
-        System.out.println("NutritionDay->date " + created.getDate());
-        System.out.println("NutritionDay->userEmail " + created.getUser().getEmail());
-        for (Meal meal : nutritionDay.getMeals()) {
-            mealService.temporaryDebug("", meal);
-        }
-
         mealService.create(created.getMeals());
-        System.out.println("Po zapisie posiłków");
-        System.out.println("NutritionDay->id " + created.getId());
-        System.out.println("NutritionDay->date " + created.getDate());
-        System.out.println("NutritionDay->userEmail " + created.getUser().getEmail());
-        for (Meal meal : nutritionDay.getMeals()) {
-            mealService.temporaryDebug("", meal);
-        }
-
         return created;
-
     }
 
-    public void delete(String userEmail, LocalDate date) {
-        Long mealId = findOneByUserEmailAndDate(userEmail, date).getId();
-        mealService.deleteByNutritionDayId(mealId);
-        nutritionDayRepository.delete(mealId);
+    public void delete(Long userId, Long nutritionDayId) {
+        mealService.deleteByNutritionDayId(nutritionDayId);
+        nutritionDayRepository.delete(nutritionDayId);
     }
 
-    public NutritionDay update(NutritionDay nutritionDay) {
-        nutritionDay.setUser(userService.findByEmail(nutritionDay.getUser().getEmail()));
+    public NutritionDay update(NutritionDay nutritionDay, Long userId, Long nutritionDayId) {
+        nutritionDay.setUser(userService.findOne(userId));
         NutritionDay saved = save(nutritionDay);
-        System.out.println("Po updacie dnia");
-        System.out.println("NutritionDay->id " + saved.getId());
-        System.out.println("NutritionDay->date " + saved.getDate());
-        System.out.println("NutritionDay->userEmail " + saved.getUser().getEmail());
-        for (Meal meal : nutritionDay.getMeals()) {
-            mealService.temporaryDebug("", meal);
+        if (getMealsIds(nutritionDay).isEmpty()) {
+            mealService.deleteByNutritionDayId(saved.getId());
+        } else {
+            mealService.deleteByNutritionDayIdInAndIdNotId(nutritionDayId, getMealsIds(nutritionDay));
         }
-        mealService.deleteByNutritionDayIdInAndIdNotId(nutritionDay.getId(), getMealsIds(nutritionDay));
-        System.out.println("Po usunięciu posiłków dnia");
-        System.out.println("NutritionDay->id " + saved.getId());
-        System.out.println("NutritionDay->date " + saved.getDate());
-        System.out.println("NutritionDay->userEmail " + saved.getUser().getEmail());
-        for (Meal meal : nutritionDay.getMeals()) {
-            mealService.temporaryDebug("", meal);
-        }
-
         
         mealService.update(nutritionDay.getMeals());
-        System.out.println("Po updacie posiłków");
-        System.out.println("NutritionDay->id " + saved.getId());
-        System.out.println("NutritionDay->date " + saved.getDate());
-        System.out.println("NutritionDay->userEmail " + saved.getUser().getEmail());
-        for (Meal meal : nutritionDay.getMeals()) {
-            mealService.temporaryDebug("", meal);
-        }
         return saved;
     }
 }

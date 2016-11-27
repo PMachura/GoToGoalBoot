@@ -5,10 +5,10 @@
  */
 package gotogoal.additional.garbage;
 
-import gotogoal.model.NutritionDay;
-import gotogoal.model.Meal;
-import gotogoal.service.NutritionDayService;
-import gotogoal.service.MealService;
+import gotogoal.model.nutrition.NutritionDay;
+import gotogoal.model.nutrition.Meal;
+import gotogoal.service.nutrition.NutritionDayService;
+import gotogoal.service.nutrition.MealService;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

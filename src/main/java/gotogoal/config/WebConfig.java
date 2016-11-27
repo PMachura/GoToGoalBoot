@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import gotogoal.model.jsonSerializer.NutritionDayMixIn;
+import gotogoal.rest.jsonSerializer.nutrition.NutritionDayMixIn;
 import java.sql.Date;
 import java.time.LocalDate;
 import javax.persistence.AttributeConverter;
@@ -27,16 +27,20 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.UrlPathHelper;
-import gotogoal.model.NutritionDay;
-import gotogoal.model.Meal;
-import gotogoal.model.jsonSerializer.FoodProductResourceMixIn;
-import gotogoal.model.jsonSerializer.NutritionDayMixIn;
-import gotogoal.model.jsonSerializer.NutritionDayResourceMixIn;
-import gotogoal.model.jsonSerializer.MealMixIn;
-import gotogoal.model.jsonSerializer.MealResourceMixIn;
-import gotogoal.rest.resource.FoodProductResource;
-import gotogoal.rest.resource.NutritionDayResource;
-import gotogoal.rest.resource.MealResource;
+import gotogoal.model.nutrition.NutritionDay;
+import gotogoal.model.nutrition.Meal;
+import gotogoal.model.user.User;
+import gotogoal.rest.jsonSerializer.nutrition.FoodProductResourceMixIn;
+import gotogoal.rest.jsonSerializer.nutrition.NutritionDayMixIn;
+import gotogoal.rest.jsonSerializer.nutrition.NutritionDayResourceMixIn;
+import gotogoal.rest.jsonSerializer.nutrition.MealMixIn;
+import gotogoal.rest.jsonSerializer.nutrition.MealResourceMixIn;
+import gotogoal.rest.jsonSerializer.user.UserMixIn;
+import gotogoal.rest.jsonSerializer.user.UserResourceMixIn;
+import gotogoal.rest.resource.nutrition.FoodProductResource;
+import gotogoal.rest.resource.nutrition.NutritionDayResource;
+import gotogoal.rest.resource.nutrition.MealResource;
+import gotogoal.rest.resource.user.UserResource;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -58,6 +62,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         builder.mixIn(NutritionDayResource.class, NutritionDayResourceMixIn.class);
         builder.mixIn(FoodProductResource.class, FoodProductResourceMixIn.class);
         builder.mixIn(MealResource.class, MealResourceMixIn.class);
+        builder.mixIn(User.class, UserMixIn.class);
+        builder.mixIn(UserResource.class, UserResourceMixIn.class);
         return builder;
     }
 

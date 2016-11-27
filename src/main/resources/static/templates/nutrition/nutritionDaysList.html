@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<div class="panel panel-primary" ng-cloak>
+    <div class="panel-heading clearfix">
+        <h2>Dzienniki żywieniowe
+            <button type="button" class="btn-lg btn-primary pull-right" ng-click="createOrEditNutritionDay()">
+                Dodaj dziennik</span> 
+            </button>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button"> 
+                    <span class="glyphicon glyphicon-search "></span> 
+                </button>
+            </span>
+            <input type="text" class="form-control" placeholder="Data"/>
+        </div>
+        <hr/>
+        <ul class="list-group">
+            <li class="list-group-item clearfix" ng-repeat="nutritionDay in nutritionDays.content| orderBy: '-date'">    
+                <button type="button" ng-click="deleteNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-trash"></span> 
+                </button>
+                <button type="button" ng-click="createOrEditNutritionDay(nutritionDay)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                </button>
+                <a data-target="#nutritionDayMeals{{nutritionDay.id}}" class="btn btn-primary pull-right " data-toggle="collapse">
+                    <span class="glyphicon glyphicon-search"></span> 
+                </a>
+            <ng-include src="'/templates/nutrition/nutritionDay.html'"></ng-include>
+            <div id="nutritionDayMeals{{nutritionDay.id}}" class="collapse">
+                <div class="" ng-repeat="meal in nutritionDay.meals">
+                    <ng-include src="'/templates/nutrition/mealInMealsList.html'" />
+                </div>       
+            </div>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-footer">
+        <ul class="pager">
+            <li ng-if="!nutritionDays.first"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number - 1)">Nowsze</a></li>
+            <li ng-if="!nutritionDays.last"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number + 1)">Starsze</a></li>
+        </ul>
+    </div>
+</div>               

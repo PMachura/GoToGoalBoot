@@ -1,0 +1,17 @@
+<div ng-controller="workoutController" class="row center-block">
+    <div class="row center-block ">
+        <div class="container" ng-if="displayMode.view">
+            <ng-include src="'/templates/workout/workoutDaysList.html'" />  
+        </div>
+    </div>
+    <div class="row center-block">
+        <div class="container" ng-if="displayMode.creation">
+            <ng-include src="'/templates/workout/currentWorkoutDay.html'" />
+        </div>
+    </div>
+    <div>
+    </div>
+</div>
+
+
+

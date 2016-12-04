@@ -27,5 +27,7 @@ public interface NutritionDayRepository extends JpaRepository<NutritionDay, Long
     public Page<NutritionDay> findByDateLessThanEqual(LocalDate localDate, Pageable pageable);
     public Page<NutritionDay> findByUserEmail(String userEmail, Pageable pageable);
     public Page<NutritionDay> findByUserId(Long userId, Pageable pageable);
+    public Page<NutritionDay> findByUserIdAndDateLessThanEqual(Long userId, LocalDate date, Pageable pageable);
     public NutritionDay findByUserIdAndDate(Long userId, LocalDate date);
+    public NutritionDay findByUserIdAndId(Long userId, Long id);
 }

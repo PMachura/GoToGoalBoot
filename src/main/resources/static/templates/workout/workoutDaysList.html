@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<div class="panel panel-primary" ng-cloak>
+    <div class="panel-heading clearfix">
+        <h2>Dzienniki treningowe
+            <button type="button" class="btn-lg btn-primary pull-right" ng-click="createOrEditWorkoutDay()">
+                Dodaj dziennik</span> 
+            </button>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <form name="workoutDaySearchForm" novalidate>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button" ng-click="getWorkoutDaysPage(0, currentWorkoutDay.date)" ng-disabled="workoutDaySearchForm.$invalid"> 
+                        <span class="glyphicon glyphicon-search "></span> 
+                    </button>
+                </span>
+                <input type="text" class="form-control" ng-model="currentWorkoutDay.date" ng-pattern="datePattern" placeholder="Data"/>
+            </div>
+        </form>
+        <hr/>
+        <ul class="list-group">
+            <li class="list-group-item clearfix" ng-repeat="workoutDay in workoutDays.content| orderBy: '-date'">    
+                <button type="button" ng-click="deleteWorkoutDay(workoutDay)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-trash"></span> 
+                </button>
+                <button type="button" ng-click="createOrEditWorkoutDay(workoutDay)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-pencil"></span> 
+                </button>
+                <a data-target="#nutritionDayMeals{{workoutDay.id}}" class="btn btn-primary pull-right " data-toggle="collapse">
+                    <span class="glyphicon glyphicon-search"></span> 
+                </a>
+            <ng-include src="'/templates/workout/workoutDay.html'"></ng-include>
+            <div id="nutritionDayMeals{{workoutDay.id}}" class="collapse">
+                <div class="" ng-repeat="workout in workoutDay.workouts">
+                    <ng-include src="'/templates/workout/workout.html'" />
+                </div>       
+            </div>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-footer">
+        <ul class="pager">
+            <li ng-if="!workoutDays.first"><a href="" ng-click="getWorkoutDaysPage(workoutDays.number - 1, currentWorkoutDay.date)">Nowsze</a></li>
+            <li ng-if="!workoutDays.last"><a href="" ng-click="getWorkoutDaysPage(workoutDays.number + 1, currentWorkoutDay.date)">Starsze</a></li>
+        </ul>
+    </div>
+</div>               

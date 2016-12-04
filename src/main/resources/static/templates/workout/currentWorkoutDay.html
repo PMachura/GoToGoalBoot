@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2>
+            Dziennik treningowy {{currentWorkoutDay.content.date| date: "yyyy-MM-dd"}}
+        </h2>
+
+    </div>
+    <div class="panel-body"> 
+        <form name="workoutDayForm" novalidate>
+            <div class="input-group">
+                <span class="input-group-addon ">Data</span>
+                <input class="form-control input-lg" aria-describedby="basic-addon" placeholder="rrrr-MM-dd" 
+                       ng-model="currentWorkoutDay.content.date"  type="text" required ng-pattern="datePattern"  name="workoutDayDate" />
+            </div>
+            <hr/>
+            <div class="clearfix" ng-repeat="workout in currentWorkoutDay.content.workouts">
+                <ng-include src="'/templates/workout/currentWorkout.html'" />
+            </div>  
+            
+             <div class="form-group">
+                <label for="note">Notatka</label>
+                <textarea class="form-control" id="note" ng-model="currentWorkoutDay.content.note"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer  clearfix ">
+        <button class=" btn btn-lg btn-primary pull-right" ng-disabled="workoutDayForm.$invalid" ng-click="saveCurrentWorkoutDay(currentWorkoutDay)">
+            Zapisz dziennik
+        </button>
+         <button class=" btn btn-lg btn-primary pull-right" ng-click="cancelWorkoutDayCreation(currentWorkoutDay)">
+            Anuluj
+        </button>
+        <button  class="btn-lg btn-primary pull-left" ng-click="addEmptyWorkoutToWorkoutDay(currentWorkoutDay.content)">
+            Dodaj trening
+        </button>
+
+    </div>
+
+</div>

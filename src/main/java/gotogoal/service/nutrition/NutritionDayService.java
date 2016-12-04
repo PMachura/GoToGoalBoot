@@ -18,6 +18,8 @@ import gotogoal.rest.resource.nutrition.NutritionDayResource;
 import gotogoal.rest.resource.assembler.nutrition.NutritionDayResourceAssembler;
 import java.util.Arrays;
 import gotogoal.repository.nutrition.NutritionDayRepository;
+import gotogoal.validator.NutritionDayValidator;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -34,16 +36,17 @@ public class NutritionDayService {
     private NutritionDayRepository nutritionDayRepository;
     private MealService mealService;
     private UserService userService;
-    private NutritionDayResourceAssembler nutritionDayResourceAssembler;
+    private NutritionDayValidator nutritionDayValidator;
 
     @Autowired
     public NutritionDayService(NutritionDayRepository nutritionDayRepository,
             MealService mealService, UserService userService,
-            NutritionDayResourceAssembler nutritionDayResourceAssembler) {
+            NutritionDayResourceAssembler nutritionDayResourceAssembler,
+            NutritionDayValidator nutritionDayValidator) {
         this.nutritionDayRepository = nutritionDayRepository;
-        this.nutritionDayResourceAssembler = nutritionDayResourceAssembler;
         this.mealService = mealService;
         this.userService = userService;
+        this.nutritionDayValidator = nutritionDayValidator;
     }
 
     /**
@@ -68,10 +71,7 @@ public class NutritionDayService {
         return nutritionDayRepository.findAll();
     }
 
-    private Collection<NutritionDayResource> mapToResource(Collection<NutritionDay> collection) {
-        return Arrays.asList(collection.stream().map(nutritionDayResourceAssembler::toResource)
-                .toArray(NutritionDayResource[]::new));
-    }
+    
 
     private NutritionDay setMealsLazy(NutritionDay nutritionDay) {
         nutritionDay.setMeals((List<Meal>) mealService.findAllByNutritionDayIdLazy(nutritionDay.getId()));
@@ -110,13 +110,8 @@ public class NutritionDayService {
     /**
      * *****************************************************************************************
      */
-    public NutritionDayResource mapToResource(NutritionDay nutritionDay) {
-        return nutritionDayResourceAssembler.toResource(nutritionDay);
-    }
-
-    public Page<NutritionDayResource> mapToResource(Page<NutritionDay> nutritionDayPage) {
-        return nutritionDayPage.map(nutritionDayResourceAssembler::toResource);
-    }
+    
+    
 
     public NutritionDay findOneEager(Long id) {
         return setMealsLazy(findOne(id));
@@ -126,9 +121,6 @@ public class NutritionDayService {
         return setMealsEager(findOne(id));
     }
 
-//    public NutritionDayResource findOneAsResourceEagerDeep(Long id) {
-//        return nutritionDayResourceAssembler.toResource(this.findOneEagerDeep(id));
-//    }
     public NutritionDay findOneByUserEmailAndDateEager(String userName, LocalDate localDate) {
         NutritionDay nutritionDay = this.findByUserEmailAndDate(userName, localDate);
         Collection<Meal> meals = mealService.findAllByNutritionDayIdLazy(nutritionDay.getId());
@@ -136,12 +128,7 @@ public class NutritionDayService {
         return nutritionDay;
     }
 
-//    public NutritionDayResource findOneEagerAsResource(Long id) {
-//        return nutritionDayResourceAssembler.toResource(this.findOneEager(id));
-//    }
-//    public NutritionDayResource findOneByUserEmailAndDateAsResourceEager(String userName, LocalDate localDate) {
-//        return nutritionDayResourceAssembler.toResource(this.findOneByUserEmailAndDateEager(userName, localDate));
-//    }
+
     public Page<NutritionDay> findAllByUserEmailAndDateAsPageLazy(String userEmail, LocalDate localDate, Pageable pageable) {
         Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserEmail(userEmail, pageable);
         setMealsToNull(nutritionDayPage.getContent());
@@ -153,9 +140,16 @@ public class NutritionDayService {
         setMealsLazy(nutritionDayPage.getContent());
         return nutritionDayPage;
     }
+    
+    public Page<NutritionDay> findAllByUserIdAndDateLessThanEqualEager(Long userId, LocalDate localDate, Pageable pageable){
+        Page<NutritionDay> nutritionDayPage = nutritionDayRepository.findByUserIdAndDateLessThanEqual(userId, localDate, pageable);
+        setMealsLazy(nutritionDayPage.getContent());
+        return nutritionDayPage;
+    }
 
     @Transactional
-    public NutritionDay create(NutritionDay nutritionDay, Long userId) {
+    public NutritionDay create(NutritionDay nutritionDay, Long userId, Principal principal) {    
+        nutritionDayValidator.validateNutritionDayCreation(nutritionDay, userId, principal);
         validateUniqueness(userId, nutritionDay.getDate());
         nutritionDay.setUser(userService.findOne(userId));
         NutritionDay created = nutritionDayRepository.save(nutritionDay);
@@ -163,12 +157,17 @@ public class NutritionDayService {
         return created;
     }
 
-    public void delete(Long userId, Long nutritionDayId) {
+    public void delete(Long userId, Long nutritionDayId, Principal principal) {
+        nutritionDayValidator.validateNutritionDayDeletion(userId, nutritionDayId, principal);
         mealService.deleteByNutritionDayId(nutritionDayId);
         nutritionDayRepository.delete(nutritionDayId);
     }
 
-    public NutritionDay update(NutritionDay nutritionDay, Long userId, Long nutritionDayId) {
+    //UWAGA TEGO NIE BYŁO
+    @Transactional
+    public NutritionDay update(NutritionDay nutritionDay, Long userId, Long nutritionDayId, Principal principal) {
+        
+        nutritionDayValidator.validateNutritionDayUpdates(nutritionDay, userId, nutritionDayId, principal);
         nutritionDay.setUser(userService.findOne(userId));
         NutritionDay saved = save(nutritionDay);
         if (getMealsIds(nutritionDay).isEmpty()) {

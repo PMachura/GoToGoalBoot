@@ -33,7 +33,6 @@ public class MealService {
 
     private MealRepository mealRepository;
     private MealFoodProductService mealFoodProductService;
-    private MealResourceAssembler mealResourceAssembler;
 
     @Autowired
     public MealService(MealRepository mealRepository,
@@ -41,7 +40,6 @@ public class MealService {
             MealResourceAssembler mealResourceAssembler) {
         this.mealRepository = mealRepository;
         this.mealFoodProductService = mealFoodProductService;
-        this.mealResourceAssembler = mealResourceAssembler;
     }
 
     private Meal findOne(Long id) {
@@ -82,15 +80,8 @@ public class MealService {
         return meal;
     }
 
-    public Collection<MealResource> mapToResource(Collection<Meal> meals) {
-        return Arrays.asList(meals.stream()
-                .map(mealResourceAssembler::toResource)
-                .toArray(MealResource[]::new));
-    }
     
-    public MealResource mapToResource(Meal meal) {
-        return mealResourceAssembler.toResource(meal);
-    }
+    
 
     private Meal save(Meal meal) {
         return mealRepository.save(meal);

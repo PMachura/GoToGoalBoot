@@ -8,8 +8,11 @@ package gotogoal.rest.resource.assembler.nutrition;
 import gotogoal.model.nutrition.NutritionDay;
 import gotogoal.rest.controller.nutrition.MealRestController;
 import gotogoal.rest.controller.nutrition.NutritionDayRestController;
+import gotogoal.rest.controller.user.UserRestController;
 import gotogoal.rest.resource.nutrition.NutritionDayResource;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
@@ -22,28 +25,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  *
  * @author Przemek
  */
-//class NutritionDayPageAssembler {
-//
-//    public NutritionDayResource toResource(LocalDate localDate, Page<NutritionDay> page) {
-//        System.out.println("@@@@@ETAP 1");
-//        NutritionDayResource nutritionDayResource = new NutritionDayResource(page.getContent());
-//        System.out.println("@@@@@ETAP 2");
-//        if (page.hasNext()) {
-//            nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                    .findAll(localDate, page.getNumber() + 1, page.getSize())).withRel("nextPage"));
-//        }
-//        System.out.println("@@@@@ETAP 3");
-//        if (page.hasPrevious()) {
-//            nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                    .findAll(localDate, page.getNumber() - 1, page.getSize())).withRel("nextPage"));
-//        }
-//        System.out.println("@@@@@ETAP 4");
-//        nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                .findAll(localDate, page.getNumber() - 1, page.getSize())).withSelfRel());
-//        System.out.println("@@@@@ETAP 5");
-//        return nutritionDayResource;
-//    }
-//}
 
 @Component
 public class NutritionDayResourceAssembler extends ResourceAssemblerSupport<NutritionDay, NutritionDayResource> {
@@ -52,28 +33,29 @@ public class NutritionDayResourceAssembler extends ResourceAssemblerSupport<Nutr
 
     public NutritionDayResourceAssembler() {
         super(NutritionDayRestController.class, NutritionDayResource.class);
-      //  this.nutritionDayPageAssembler = new NutritionDayPageAssembler();
+     
     }
 
     @Override
     public NutritionDayResource toResource(NutritionDay nutritionDay) {
         NutritionDayResource nutritionDayResource = new NutritionDayResource(nutritionDay);
         nutritionDayResource.add(linkTo(NutritionDayRestController.class,nutritionDay.getUser().getId()).slash(nutritionDay.getId()).withSelfRel());
+        nutritionDayResource.add(linkTo(UserRestController.class).slash(nutritionDay.getUser().getId()).withRel("user"));
+        nutritionDayResource.add(linkTo(MealRestController.class,nutritionDay.getUser().getId(),nutritionDay.getId()).withRel("meals"));
         return nutritionDayResource;
+    }
+    
+    private Collection<NutritionDayResource> toResource(Collection<NutritionDay> collection) {
+        return Arrays.asList(collection.stream().map(this::toResource)
+                .toArray(NutritionDayResource[]::new));
+    }
+    
+    public Page<NutritionDayResource> toResource(Page<NutritionDay> nutritionDayPage) {
+        return nutritionDayPage.map(this::toResource);
     }
 
     public NutritionDayResource toResource(LocalDate localDate, Page<NutritionDay> page) {
         NutritionDayResource nutritionDayResource = new NutritionDayResource(page.getContent());
-//        if (page.hasNext()) {
-//            nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                    .findAll(localDate, page.getNumber() + 1, page.getSize())).withRel("nextPage"));
-//        }
-//        if (page.hasPrevious()) {
-//            nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                    .findAll(localDate, page.getNumber() - 1, page.getSize())).withRel("previousPage"));
-//        }
-//        nutritionDayResource.add(linkTo(methodOn(NutritionDayRestController.class)
-//                .findAll(localDate, page.getNumber(), page.getSize())).withSelfRel());
 
         return nutritionDayResource;
     }

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>Twój profil</h2>
+        </div>
+        <div class="panel-body">
+            <h3>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Imię:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.firstName}}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Nazwisko:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.lastName}}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.email}}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Data urodzenia:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.birthDate}}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Wzrost:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.height}}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Waga:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        {{user.weight}}
+                    </div>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-footer">
+             <button type="button" class="btn btn-lg btn-primary btn-block" ng-click="createOrEditUser(user)">Edytuj profil</button>
+        </div>
+    </div>
+

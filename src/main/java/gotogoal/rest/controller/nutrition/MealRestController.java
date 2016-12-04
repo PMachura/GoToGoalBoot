@@ -10,6 +10,7 @@ import gotogoal.model.nutrition.Meal;
 import gotogoal.model.nutrition.MealFoodProduct;
 import gotogoal.rest.resource.nutrition.MealResource;
 import gotogoal.rest.resource.assembler.nutrition.MealResourceAssembler;
+import gotogoal.rest.resource.nutrition.NutritionDayResource;
 import gotogoal.service.nutrition.MealService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,8 +50,13 @@ public class MealRestController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Collection<MealResource>> findAll(@PathVariable Long userId, @PathVariable Long nutritionDayId) {
-        Collection<MealResource> response = mealService.mapToResource(mealService.findByUserIdAndNutritionDayIdEager(userId, nutritionDayId));
+        Collection<MealResource> response = mealResourceAssembler.toResource(mealService.findByUserIdAndNutritionDayIdEager(userId, nutritionDayId));
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<MealResource> findOne(@PathVariable Long id){
+        return new ResponseEntity(mealResourceAssembler.toResource(mealService.findOneEager(id)), HttpStatus.OK);
     }
    
 }

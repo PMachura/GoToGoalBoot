@@ -12,8 +12,12 @@ angular.module("goToGoalModule", ["ngResource", "macronutrientsCalculatorModule"
             $routeProvider.when("/register", {
                 templateUrl: "/templates/user/register.html"
             });
+            $routeProvider.when("/user", {
+                templateUrl: "/templates/user/index.html"
+            });
+            $routeProvider.when("/workoutDays", {
+                templateUrl: "/templates/workout/index.html"
+            });
              
-            
-            $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
         });
 

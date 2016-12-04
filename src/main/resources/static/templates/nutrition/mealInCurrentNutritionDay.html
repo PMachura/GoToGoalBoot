@@ -4,8 +4,9 @@
     </div>
     <div class="panel-body">
         <div class="input-group">
-            <span class="input-group-addon">Time</span>
-            <input type="text" class="form-control input-lg" aria-describedby="basic-addon" ng-model="meal.time" />
+            <span class="input-group-addon">Czas</span>
+            <input  class="form-control" aria-describedby="basic-addon" placeholder="gg:mm:ss"
+                    type="text" required ng-pattern="timePattern"  name="mealTime"  ng-model="meal.time" />
         </div>
         <h4>
             <table class="table">
@@ -26,7 +27,7 @@
                         <td>{{eatenFoodProduct.name}}</td>
                         <td>{{eatenFoodProduct.category}}</td>
                         <td>
-                            <input type="number" ng-model="eatenFoodProduct.grams" 
+                            <input type="number" ng-min="0" ng-model="eatenFoodProduct.grams" 
                                    ng-change="updateEatenFoodProductMealNutritionDayMacronutrients(eatenFoodProduct, meal, currentNutritionDay.content)"/>
                         </td>
                         <td>{{eatenFoodProduct.macronutrients.allCalories| number:1}}</td>

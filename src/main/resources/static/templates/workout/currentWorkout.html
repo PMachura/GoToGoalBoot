@@ -1,0 +1,72 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Trening {{workout.startTime}}</h3>
+    </div>
+    <div class="panel-body">      
+        <div class="input-group">
+            <span class="input-group-addon">Rozpoczęcie</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon" 
+                   ng-model="workout.startTime" type="text" ng-pattern="timePattern" required name="workoutTime" />
+        </div>
+         <div class="input-group">
+            <span class="input-group-addon">Czas</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon" placeholder="gg:mm:ss"
+                   ng-model="workout.time" type="text" ng-pattern="timePattern"  name="workoutTime" />
+        </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Serie</th>
+                        <th>Powtorzenia</th>
+                        <th>Obciążenie</th>
+                        <th>Intensywność</th>
+                        <th>Czas</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="doneExercise in workout.doneExercises">
+                        <td class="col-md-4">{{doneExercise.name}}</td>                    
+                        <td class="col-md-1"><input type="number" ng-model="doneExercise.series"/></td>
+                        <td class="col-md-1"><input type="number" ng-model="doneExercise.repeats"/></td>
+                        <td class="col-md-1"><input type="number" ng-model="doneExercise.charge"/></td>
+                        <td class="col-md-1"><input type="number" ng-model="doneExercise.intensity"/></td>
+                        <td class="col-md-1"><input type="text" ng-model="doneExercise.time" ng-pattern="timePattern"/></td>
+                        <td class="col-md-1">
+                            <button type="button" ng-click="deleteDoneExerciseFromWorkout(doneExercise, workout)" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-trash"></span> 
+                            </button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>    
+    </div>
+
+    <div class="panel-footer  clearfix ">
+
+        <div class="col-md-2">
+            <button  class="btn btn-primary" ng-click="addExerciseToWorkout(currentWorkoutDay.exerciseToAdd, workout)">
+                Dodaj ćwiczenie
+            </button>
+        </div>
+        <div class="col-md-4">
+            <ui-select ng-model="currentWorkoutDay.exerciseToAdd">
+                <ui-select-match>
+                    <span ng-bind="$select.selected.name"></span>
+                </ui-select-match>
+                <ui-select-choices repeat="item in (exercises | filter: $select.search) track by item.id">
+                    <div ng-bind="item.name"></div>
+                </ui-select-choices>
+            </ui-select>
+        </div> 
+        <div class="col-md-6">
+            <button  class="btn-lg btn-primary pull-right" ng-click="deleteWorkoutFromWorkoutDay(currentWorkoutDay.content, workout)">
+                Usuń 
+            </button>
+        </div>
+
+    </div>
+
+</div>

@@ -10,6 +10,8 @@ import gotogoal.model.user.User;
 import gotogoal.repository.user.UserRepository;
 import gotogoal.rest.resource.assembler.user.UserResourceAssembler;
 import gotogoal.rest.resource.user.UserResource;
+import gotogoal.validator.UserValidator;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,27 +27,32 @@ public class UserService {
 
     final UserRepository userRepository;
     final UserResourceAssembler userResourceAssembler;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserResourceAssembler userResourceAssembler) {
+    public UserService(UserRepository userRepository, UserResourceAssembler userResourceAssembler, UserValidator userValidator) {
         this.userRepository = userRepository;
         this.userResourceAssembler = userResourceAssembler;
+        this.userValidator = userValidator;
     }
-    
-   public UserResource mapToResource(User user){
-       return userResourceAssembler.toResource(user);
-   }
+ 
     
    public User findOne(Long userId){
        return userRepository.findOne(userId);
    }
    
    public User create(User user){
+       userValidator.validateUserCreation(user);
        return userRepository.save(user);
    }
    
    public User findByEmail(String email){
        return userRepository.findByEmail(email);
    }
+
+    public User update(User user, Long id,  Principal principal) {
+        userValidator.validateUserUpdates(user, id, principal);
+        return userRepository.save(user);
+    }
 
 }

@@ -23,43 +23,45 @@
         <script src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
         <script src="/angularjs/restResource/resourceHandlerModule.js"></script>
+        <script src="/angularjs/restResource/authenticationHandler.js"></script>
         <script src="/angularjs/restResource/nutritionResourceHandler.js"></script>
+        <script src="/angularjs/restResource/workoutResourceHandler.js"></script>
         <script src="/angularjs/restResource/userResourceHandler.js"></script>
         <script src="/angularjs/helper/macronutrientsCalculator.js"></script>
         <script src="/angularjs/main/goToGoalModule.js"></script>
         <script src="/angularjs/main/goToGoalController.js"></script>
+        <script src="/angularjs/main/workoutController.js"></script>
         <script src="/angularjs/main/nutritionController.js"></script>
-        <script src="/angularjs/main/authenticationController.js"></script>
-        <script src="/angularjs/main/registerController.js"></script>
+        <script src="/angularjs/main/userController.js"></script>
 
 
 
     </head>
 
     <style>
-        form .ng-valid.ng-dirty { background-color: aliceblue; }
+        form .ng-valid { background-color: #FCF2CA; }
         span.summary.ng-invalid { color: red; font-weight: bold; }
         span.summary.ng-valid { color: green; }
         div.error {color: red; font-weight: bold;}
     </style>
 
     <body ng-app="goToGoalModule" ng-controller="goToGoalController">
-        <nav ng-controller="authenticationController" class="navbar navbar-default">
+        <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#"></a>
                     <img th:src="@{/images/logo.png}"/>
                 </div>
                 <ul class="nav navbar-nav">
-                    <li ><a href="#">Strona główna</a></li>
-                                    
+                    <li ><a href="#">Strona główna</a></li>                                    
                 </ul>
                 <ul ng-if="!authenticated"  class="nav navbar-nav">
-                   <li><a href="#/register">Rejestracja</a></li>  
+                    <li><a href="#/register">Rejestracja</a></li>  
                 </ul>
                 <ul ng-if="authenticated" class="nav navbar-nav">
                     <li><a href="#/nutritionDays">Dziennik żywieniowy</a></li>
-                    <li><a href="#/profile">Mój profil</a></li>
+                    <li><a href="#/workoutDays">Dziennik treningowy</a></li>
+                    <li><a href="#/user">Mój profil</a></li>
                 </ul>
                 <ul ng-if="authenticated" class="nav navbar-nav pull-right">
                     <li><a>Zalogowany jako: <strong>{{user.email}}</strong></a></li>
@@ -67,7 +69,7 @@
                 </ul>
                 <div >
                     <div ng-if="!authenticated">
-                        <form class="navbar-form navbar-right" role="form" ng-submit="login()">
+                        <form class="navbar-form navbar-right" role="form" ng-submit="login(credentials)">
                             <div class="form-group">
                                 <input type="text" class="form-control" name="userEmail" placeholder="Email" ng-model="credentials.userEmail"/>
                             </div>
@@ -80,12 +82,14 @@
                 </div>
             </div>
         </nav>
-        <div ng-if="messageHandler.display" class="row center-block">
-            <div class="alert alert-info">
-                <strong>{{messageHandler.text}}</strong> 
+        <div ng-if="alerter.display" class="row center-block">
+            <div class="container">
+                <div class="alert" ng-class="alerter.class">
+                    <h4><strong>{{alerter.messageText}}</strong></h4> 
+                </div>
             </div>
+
         </div>
-        {{user}}
     <ng-view />
 </body>
 </html>

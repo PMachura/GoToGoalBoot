@@ -1,0 +1,31 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Trening: {{workout.time}} Czas: {{workout.startTime}}</h4>
+    </div>
+    <div class="panel-body">
+        <h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Serie</th>
+                        <th>Powtorzenia</th>
+                        <th>Obciążenie</th>
+                        <th>Intensywność</th>
+                        <th>Czas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="doneExercise in workout.doneExercises">
+                        <td>{{doneExercise.name}}</td>
+                        <td>{{doneExercise.series}}</td>
+                        <td>{{doneExercise.repeats}}</td>
+                        <td>{{doneExercise.charge}}</td>
+                        <td>{{doneExercise.intensity}}</td>
+                        <td>{{doneExercise.time}}</td>                            
+                    </tr>
+                </tbody>
+            </table>
+        </h4>
+    </div>
+</div>

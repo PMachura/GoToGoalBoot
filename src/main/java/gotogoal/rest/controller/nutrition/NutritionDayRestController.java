@@ -14,6 +14,7 @@ import gotogoal.rest.resource.assembler.nutrition.NutritionDayResourceAssembler;
 import gotogoal.rest.resource.assembler.nutrition.MealResourceAssembler;
 import gotogoal.service.nutrition.NutritionDayService;
 import gotogoal.service.nutrition.MealService;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,48 +57,49 @@ public class NutritionDayRestController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Page<NutritionDayResource>> findAll(
             @PathVariable Long userId,
-            @RequestParam(value = "date", required = false) LocalDate date,
+            @RequestParam(value = "date", required = false, defaultValue = "2050-01-01") LocalDate date,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "2") int size,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
             @RequestParam(value = "sort", required = false, defaultValue = "desc") String sort) {
 
         Page<NutritionDayResource> nutritionDayResourcePage = 
-                nutritionDayService.mapToResource(nutritionDayService.findAllByUserIdEager(userId, new PageRequest(page, size, new Sort(Sort.Direction.fromStringOrNull(sort), "date"))));
+                nutritionDayResourceAssembler.toResource(nutritionDayService.findAllByUserIdAndDateLessThanEqualEager(userId, date, new PageRequest(page, size, new Sort(Sort.Direction.fromStringOrNull(sort), "date"))));
         
         return new ResponseEntity(nutritionDayResourcePage, HttpStatus.OK);
     }
 
-    /**
-     *
-     * @param nutritionDay
-     * @param userEmail
-     * @return
-     */
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<NutritionDayResource> findOne(@PathVariable Long id){
+        return new ResponseEntity(nutritionDayResourceAssembler.toResource(nutritionDayService.findOneEagerDeep(id)), HttpStatus.OK);
+    }
+   
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<NutritionDayResource> create(@RequestBody NutritionDay nutritionDay, @PathVariable Long userId) {
+    public ResponseEntity<NutritionDayResource> create(@RequestBody NutritionDay nutritionDay, @PathVariable Long userId, Principal principal) {
 
         for (Meal meal : nutritionDay.getMeals()) {
             mealService.temporaryDebug("", meal);
         }
 
-        NutritionDay created = nutritionDayService.create(nutritionDay, userId);
-        NutritionDayResource response = nutritionDayService.mapToResource(nutritionDayService.findOneEagerDeep(created.getId()));
+        NutritionDay created = nutritionDayService.create(nutritionDay, userId, principal);
+        NutritionDayResource response = nutritionDayResourceAssembler.toResource(nutritionDayService.findOneEagerDeep(created.getId()));
 
         return new ResponseEntity<NutritionDayResource>(response, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable Long userId, @PathVariable Long id) {
-        nutritionDayService.delete(userId, id);
+    public ResponseEntity delete(@PathVariable Long userId, @PathVariable Long id, Principal principal) {
+        nutritionDayService.delete(userId, id, principal);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<NutritionDayResource> update(@RequestBody NutritionDay nutritionDay,
             @PathVariable Long userId,
-            @PathVariable Long id) {
-        NutritionDay updated = nutritionDayService.update(nutritionDay, userId, id);
-        NutritionDayResource response = nutritionDayService.mapToResource(nutritionDayService.findOneEagerDeep(updated.getId()));
+            @PathVariable Long id,
+            Principal principal) {
+        NutritionDay updated = nutritionDayService.update(nutritionDay, userId, id, principal);
+        NutritionDayResource response = nutritionDayResourceAssembler.toResource(nutritionDayService.findOneEagerDeep(updated.getId()));
         return new ResponseEntity<NutritionDayResource>(response, HttpStatus.OK);
     }
 

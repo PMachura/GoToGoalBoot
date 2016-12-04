@@ -1,6 +1,6 @@
 
 
-<h3>{{nutritionDay.date}}</h3>
+<h3><u>{{nutritionDay.date}}</u></h3>
 <h4>
     <b>Kalorie</b> {{nutritionDay.macronutrients.allCalories| number:1}}
 
@@ -18,5 +18,12 @@
     {{nutritionDay.macronutrients.fats.grams| number:1}} g
     {{nutritionDay.macronutrients.fats.calories.amount| number:1}} 
     ({{nutritionDay.macronutrients.fats.calories.percentage| number:1}}%) kcal 
+    <br/>
+    <br/>
+        {{nutritionDay.note}}
+    <hr/>
+        
+ 
+
 </h4>
 

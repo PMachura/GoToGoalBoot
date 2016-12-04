@@ -1,0 +1,17 @@
+<div ng-controller="userController" class="row center-block">
+    <div class="row center-block ">
+        <div class="container" ng-if="displayMode.view">
+            <ng-include src="'/templates/user/profile.html'" />  
+        </div>
+    </div>
+    <div class="row center-block">
+        <div class="container" ng-if="displayMode.creation">
+            <ng-include src="'/templates/user/edition.html'" />
+        </div>
+    </div>
+    <div>
+    </div>
+</div>
+
+
+

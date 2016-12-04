@@ -6,16 +6,16 @@
 // OPCJE - ZMIENIĆ transformRequest ale to jest słabe to trzeba zmieniać wszystko ;p  | ZROBIĆ TAK BY KONKRETNE FOOD PRODUCTY BEZ LINKÓW BYŁY RÓWNIEŻ RESOURCAMI
 angular.module("goToGoalModule")
         .controller("nutritionController", function ($scope, $rootScope,
-                macronutrientsCalculator, nutritionResourceHandler) {
+                macronutrientsCalculator, nutritionResourceHandlerFactory, authenticationHandler, $location) {
 
-            $scope.test = {};
+      
             $scope.currentNutritionDay = {};
-            nutritionResourceHandler.setUser($rootScope.user);
-            $scope.viewMode = {
-              nutritionDaysList: true,
-              nutritionDaysEdit: false
-            };
-            
+            var nutritionResourceHandler = null;
+            $rootScope.displayMode.setView();
+            $rootScope.alerter.setDefault();
+
+          
+
             var findIndexInArrayById = function (id, array) {
                 for (var i = 0; i < array.length; i++) {
                     if (id == array[i].id) {
@@ -25,15 +25,17 @@ angular.module("goToGoalModule")
                 return null;
             };
 
-            nutritionResourceHandler.getFoodProducts().$promise.then(function (foodProducts) {
-                $scope.foodProducts = foodProducts;
-            });
 
-            $scope.getNutritionDaysPage = function (page) {
-                if(!page || !angular.isNumber(page)){
-                    page = 0;
+
+            $scope.getNutritionDaysPage = function (page, date) {
+                var params = {};
+                if (page && angular.isNumber(page)) {
+                    params.page = page;
                 }
-                nutritionResourceHandler.getNutritionDaysPage({page: page}).$promise.then(function (nutritionDaysPage) {
+                if (date){
+                    params.date = date;
+                }
+                nutritionResourceHandler.getNutritionDaysPage(params).$promise.then(function (nutritionDaysPage) {
                     $scope.nutritionDays = nutritionDaysPage;
                     $scope.nutritionDays.content = nutritionResourceHandler.mapNutritionDaysToResource(nutritionDaysPage.content);
                     for (var i = 0; i < $scope.nutritionDays.content.length; i++) {
@@ -41,7 +43,16 @@ angular.module("goToGoalModule")
                     }
                 });
             };
-            $scope.getNutritionDaysPage();
+
+
+            authenticationHandler.getLoggedUserRequest().then(function (response) {
+                nutritionResourceHandler = nutritionResourceHandlerFactory.instantiate(response.data);
+                nutritionResourceHandler.getFoodProducts().$promise.then(function (foodProducts) {
+                    $scope.foodProducts = foodProducts;
+                });
+                $scope.getNutritionDaysPage();
+            });
+
 
 
 
@@ -51,6 +62,14 @@ angular.module("goToGoalModule")
                 } else {
                     $scope.currentNutritionDay.content = nutritionResourceHandler.getEmptyNutritionDay();
                 }
+                $rootScope.alerter.hide();
+                $rootScope.displayMode.setCreator();
+                
+            };
+            
+            $scope.cancelNutritionDayCreation = function(currentNutritionDay){
+                currentNutritionDay={};
+                $rootScope.displayMode.setView();
             };
 
             $scope.addFoodProductToMealCalculateMacronutrients = function (foodProduct, meal, nutritionDay, grams) {
@@ -65,7 +84,6 @@ angular.module("goToGoalModule")
             };
 
             $scope.addEmptyMealToNutritionDay = function (nutritionDay) {
-                console.log("HELLO");
                 console.log(nutritionResourceHandler.getEmptyMeal());
                 nutritionDay.meals.push(nutritionResourceHandler.getEmptyMeal());
             };
@@ -100,6 +118,9 @@ angular.module("goToGoalModule")
                     if (angular.isNumber(index)) {
                         $scope.nutritionDays.content.splice(index, 1);
                     }
+                    $rootScope.alerter.setSuccessMessage("Dziennik żywieniowy został usunięty");
+                    $rootScope.displayMode.setView();
+                    $location.path("/nutritionDays");
                 });
             };
 
@@ -108,20 +129,29 @@ angular.module("goToGoalModule")
                     var index = findIndexInArrayById(nutritionDayResponse.id, $scope.nutritionDays.content);
                     console.log(index);
                     if (angular.isNumber(index)) {
-                        console.log("TRUE");
                         macronutrientsCalculator.calculateMacronutrientsInNutritionDay(nutritionDayResponse);
                         $scope.nutritionDays.content[index] = nutritionDayResponse;
                     }
+                    $rootScope.alerter.setSuccessMessage("Dziennik żywieniowy został zaktualizowany");
+                    $rootScope.displayMode.setView();
+                    $location.path("/nutritionDays");
+                }, function (error) {
+                    $rootScope.alerter.setWarnintMessage(error.data.message);
+                    $location.path("/nutritionDays");
                 });
 
             };
 
-            // do dokończenia !!!
             $scope.createNutritionDay = function (nutritionDay) {
                 nutritionResourceHandler.createNutritionDay(nutritionDay).$promise.then(function (nutritionDayResponse) {
                     macronutrientsCalculator.calculateMacronutrientsInNutritionDay(nutritionDayResponse);
                     $scope.nutritionDays.content.push(nutritionDayResponse);
-                }, function (one) {
+                    $rootScope.alerter.setSuccessMessage("Dziennik żywieniowy został pomyślnie zapisany");
+                    $rootScope.displayMode.setView();
+                    $location.path("/nutritionDays");
+                }, function (error) {
+                    $rootScope.alerter.setWarnintMessage(error.data.message);
+                    $location.path("/nutritionDays");
                 });
             };
         });

@@ -5,9 +5,8 @@
  */
 
 angular.module("resourceHandlerModule")
-        .factory("nutritionResourceHandler", function ($resource, macronutrientsCalculator) {
+        .factory("nutritionResourceHandlerFactory", function ($resource, macronutrientsCalculator) {
             var resourceUrlPrefix = "http://localhost:8080/api";
-            var user = null;
             var mapToResource = function (data, resourceClass, propertyName) {
                 if (angular.isDefined(propertyName)) {
                     for (var i = 0; i < data.length; i++) {
@@ -24,63 +23,56 @@ angular.module("resourceHandlerModule")
                 return data;
             };
 
-
-            var foodProductsResource = $resource(resourceUrlPrefix + "/foodProducts/:id", {id: "@id"});
-//            var eatenFoodProducts = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:nutritionDayId/meals/:mealId/mealsFoodProducts/:id",
-//                    {email: userEmail, id: "@relationEntityId"});
-
-            var mealResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:nutritionDayId/meals/:id",
-                    { nutritionDayId: "@nutritionDay.id", id: "@id"},
-                    {
-                        create: {
-                            method: "POST"
-                        },
-                        save: {
-                            method: "PUT"
-                        }
-                    });
-                    
-
-            var nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:id", {id: "@id"}, {
-                query: {
-                    isArray: false
-                },
-                create: {
-                    method: "POST"
-                },
-                save: {
-                    method: "PUT"
-                }
-            });
-
-            return {
-                setUser :function(givenUser){
-                  user = givenUser;  
-                },
-                
-                mapNutritionDaysToResource: function (nutritionDays) {
-                    return mapToResource(nutritionDays, nutritionDaysResource);
-                },
-                getEmptyNutritionDay: function () {
+            var instantiate = function (user) {
+                var nutritionResourceHandler = new Object();
+                nutritionResourceHandler.user = angular.copy(user);
+                nutritionResourceHandler.mapToResource = mapToResource;
+                nutritionResourceHandler.foodProductsResource = $resource(resourceUrlPrefix + "/foodProducts/:id", {id: "@id"});
+                nutritionResourceHandler.mealResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:nutritionDayId/meals/:id",
+                        {userId: user.id, nutritionDayId: "@nutritionDay.id", id: "@id"},
+                        {
+                            create: {
+                                method: "POST"
+                            },
+                            save: {
+                                method: "PUT"
+                            }
+                        });
+                nutritionResourceHandler.nutritionDaysResource = $resource(resourceUrlPrefix + "/users/:userId/nutritionDays/:id", {userId: user.id, id: "@id"}, {
+                    query: {
+                        isArray: false
+                    },
+                    create: {
+                        method: "POST"
+                    },
+                    save: {
+                        method: "PUT"
+                    }
+                });
+                nutritionResourceHandler.mapNutritionDaysToResource = function(nutritionDays){
+                    return this.mapToResource(nutritionDays, this.nutritionDaysResource);
+                };
+                nutritionResourceHandler.getEmptyNutritionDay = function() {
                     return {
                         date: "2016-11-11",
                         meals: []
                     };
-                },
-                getEmptyMeal: function () {
+                };
+                nutritionResourceHandler.getEmptyMeal = function () {
                     return {
                         eatenFoodProducts: [],
                         time: "12:00:00"
                     };
                 },
-                getFoodProducts: function () {
-                    return foodProductsResource.query();
+                
+                nutritionResourceHandler.getFoodProducts = function () {
+                    return this.foodProductsResource.query();
                 },
-                getMealsForNutritionDay: function (nutritionDay) {
-                    params = {nutritionDayId: nutritionDay.id, userId: user.id};
-                    return mealResource.query(params);
+                nutritionResourceHandler.getMealsForNutritionDay = function (nutritionDay) {
+                    params = {nutritionDayId: nutritionDay.id};
+                    return this.mealResource.query(params);
                 },
-                getMealsSetItInNutritionDayCalculateMacronutrients: function (nutritionDay) {
+                nutritionResourceHandler.getMealsSetItInNutritionDayCalculateMacronutrients = function (nutritionDay) {
                     this.getMealsForNutritionDay(nutritionDay).$promise.then(function (meals) {
                         macronutrientsCalculator.calculateMacronutrientsInEatenFoodProductsInMeals(meals);
                         macronutrientsCalculator.sumMealMacronutrientsInMeals(meals);
@@ -88,22 +80,23 @@ angular.module("resourceHandlerModule")
                         nutritionDay.macronutrients = macronutrientsCalculator.sumNutritionDayMacronutrients(nutritionDay);
                     });
                 },
-                getNutritionDaysPage: function (params) {
-                    params.userId = user.id;
-                    return nutritionDaysResource.query(params);
+                nutritionResourceHandler.getNutritionDaysPage = function (params) {
+                    return this.nutritionDaysResource.query(params);
                 },
-                
-                createNutritionDay: function(nutritionDay){
-                    return nutritionDaysResource.create({date: "", userId:user.id}, nutritionDay);
+                nutritionResourceHandler.createNutritionDay = function (nutritionDay) {
+                    return this.nutritionDaysResource.create({date: ""}, nutritionDay);
                 },
-                updateNutritionDay: function(nutritionDay){
-                    return nutritionDaysResource.save({userId: user.id}, nutritionDay);
+                nutritionResourceHandler.updateNutritionDay = function (nutritionDay) {
+                    return this.nutritionDaysResource.save(nutritionDay);
                 },
-                deleteNutritionDay: function(nutritionDay){
-                    return nutritionDaysResource.delete({userId: user.id},nutritionDay);
-                }
-                
-
+                nutritionResourceHandler.deleteNutritionDay =  function (nutritionDay) {
+                    return this.nutritionDaysResource.delete(nutritionDay);
+                };
+                return nutritionResourceHandler;
+            };
+           
+            return {
+               instantiate: instantiate
             };
 
         });

@@ -7,7 +7,7 @@ package gotogoal.rest.resource.user;
 
 import gotogoal.exception.EntityNotFoundException;
 import gotogoal.model.user.User;
-import gotogoal.rest.controller.nutrition.UserRestController;
+import gotogoal.rest.controller.user.UserRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Link;

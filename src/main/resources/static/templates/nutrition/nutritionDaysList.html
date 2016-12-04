@@ -15,14 +15,16 @@ and open the template in the editor.
         </h2>
     </div>
     <div class="panel-body">
-        <div class="input-group">
-            <span class="input-group-btn">
-                <button class="btn btn-secondary" type="button"> 
-                    <span class="glyphicon glyphicon-search "></span> 
-                </button>
-            </span>
-            <input type="text" class="form-control" placeholder="Data"/>
-        </div>
+        <form name="nutritionDaySearchForm" novalidate>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button" ng-click="getNutritionDaysPage(0, currentNutritionDay.date)"  ng-disabled="nutritionDaySearchForm.$invalid"> 
+                        <span class="glyphicon glyphicon-search "></span> 
+                    </button>
+                </span>
+                <input type="text" class="form-control" placeholder="Data" ng-pattern="datePattern" ng-model="currentNutritionDay.date"/>
+            </div>
+        </form>
         <hr/>
         <ul class="list-group">
             <li class="list-group-item clearfix" ng-repeat="nutritionDay in nutritionDays.content| orderBy: '-date'">    
@@ -46,8 +48,8 @@ and open the template in the editor.
     </div>
     <div class="panel-footer">
         <ul class="pager">
-            <li ng-if="!nutritionDays.first"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number - 1)">Nowsze</a></li>
-            <li ng-if="!nutritionDays.last"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number + 1)">Starsze</a></li>
+            <li ng-if="!nutritionDays.first"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number - 1, currentNutritionDay.date)">Nowsze</a></li>
+            <li ng-if="!nutritionDays.last"><a href="" ng-click="getNutritionDaysPage(nutritionDays.number + 1, currentNutritionDay.date)">Starsze</a></li>
         </ul>
     </div>
 </div>               

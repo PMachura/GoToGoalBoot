@@ -113,8 +113,11 @@ class NutritionDayDeserializer extends JsonDeserializer<NutritionDay> {
      
         Long nutritionDayId = nutritionDayNode.has("id") ? nutritionDayNode.get("id").numberValue().longValue() : null;
         LocalDate nutritionDayDate = nutritionDayNode.has("date") ? LocalDate.parse(nutritionDayNode.get("date").textValue()) : null;
+        String nutritionDayNoe = nutritionDayNode.has("note") ? nutritionDayNode.get("note").textValue() : null;
         nutritionDay.setId(nutritionDayId);
         nutritionDay.setDate(nutritionDayDate);
+        nutritionDay.setNote(nutritionDayNoe);
+        
 
         User user = new User();
         Long userId = nutritionDayNode.has("user") ? nutritionDayNode.get("user").numberValue().longValue() : null;
@@ -131,7 +134,7 @@ class NutritionDayDeserializer extends JsonDeserializer<NutritionDay> {
 
 }
 
-class UserAsEmailSerializer extends JsonSerializer<User> {
+class UserForNutritionDaySerializer extends JsonSerializer<User> {
 
     @Override
     public void serialize(User value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
@@ -188,7 +191,7 @@ public abstract class NutritionDayMixIn extends NutritionDay {
     public abstract LocalDate getDate();
 
     @Override
-    @JsonSerialize(using = UserAsEmailSerializer.class)
+    @JsonSerialize(using = UserForNutritionDaySerializer.class)
     @JsonProperty("user")
     public abstract User getUser();
 

@@ -18,8 +18,12 @@ angular.module("resourceHandlerModule")
             });
 
             return {
-                createUser: function(user){
+                createUserRequest: function(user){
                     return userResource.create({}, user);
+                },
+                updateUserRequest: function(user){
+                    return userResource.save(user);
                 }
+                
             };
         });

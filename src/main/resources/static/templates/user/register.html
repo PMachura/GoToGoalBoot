@@ -4,18 +4,13 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<style>
-    form .ng-valid.ng-dirty { background-color: aliceblue; }
-    span.summary.ng-invalid { color: red; font-weight: bold; }
-    span.summary.ng-valid { color: green; }
-    div.error {color: red; font-weight: bold;}
-</style>
-<div ng-controller="registerController" class="row center-block">
+
+<div ng-controller="userController" class="row center-block">
     <div class="container">
-        {{message}}
-    </div>
-    <form name="userForm" novalidate ng-submit="createUser(currentUser)">
-        <div class="container">
+        <h3>Zarejestruj się, by móc korzystać z serwisu</h3>
+        <hr/>
+        <form name="userForm" novalidate ng-submit="createUser(currentUser)">
+
             <div class="form-group">
                 <label>Imię</label>
                 <input name="userFirstName" type="text" class="form-control"
@@ -56,22 +51,10 @@ and open the template in the editor.
                     ng-disabled="userForm.$invalid">
                 OK
             </button>
-        </div>
-        <hr/>
-        <div class="container">
-            {{currentUser}}
-        </div>
-        <div class="container">
-            Komunikat: {{message}}
-            <div>
-                Formularz jest poprawny:
-                <span class="summary" ng-class="userForm.$valid ? 'ng-valid' : 'ng-invalid'">
-                    {{userForm.$valid}}
-                </span>
-            </div>
-        </div>
-    </form>
+
+            <hr/>
+        </form>
+    </div>  
 </div>
 
 
-17

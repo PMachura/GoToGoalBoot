@@ -7,10 +7,13 @@ package gotogoal.rest.resource.assembler.user;
 
 import gotogoal.exception.EntityNotFoundException;
 import gotogoal.model.user.User;
-import gotogoal.rest.controller.nutrition.UserRestController;
+import gotogoal.rest.controller.nutrition.NutritionDayRestController;
+import gotogoal.rest.controller.user.UserRestController;
+import gotogoal.rest.controller.workout.WorkoutDayRestController;
 import gotogoal.rest.resource.user.UserResource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +31,8 @@ public class UserResourceAssembler extends ResourceAssemblerSupport<User, UserRe
     @Override
     public UserResource toResource(User user) {
         UserResource userResource = createResourceWithId(user.getId(), user);
+        userResource.add(linkTo(NutritionDayRestController.class, user.getId()).withRel("nutritionDays"));
+        userResource.add(linkTo(WorkoutDayRestController.class, user.getId()).withRel("workoutDays"));
         return userResource;
     }
 

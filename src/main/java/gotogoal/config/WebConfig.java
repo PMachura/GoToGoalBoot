@@ -30,6 +30,9 @@ import org.springframework.web.util.UrlPathHelper;
 import gotogoal.model.nutrition.NutritionDay;
 import gotogoal.model.nutrition.Meal;
 import gotogoal.model.user.User;
+import gotogoal.model.workout.Exercise;
+import gotogoal.model.workout.Workout;
+import gotogoal.model.workout.WorkoutDay;
 import gotogoal.rest.jsonSerializer.nutrition.FoodProductResourceMixIn;
 import gotogoal.rest.jsonSerializer.nutrition.NutritionDayMixIn;
 import gotogoal.rest.jsonSerializer.nutrition.NutritionDayResourceMixIn;
@@ -37,10 +40,19 @@ import gotogoal.rest.jsonSerializer.nutrition.MealMixIn;
 import gotogoal.rest.jsonSerializer.nutrition.MealResourceMixIn;
 import gotogoal.rest.jsonSerializer.user.UserMixIn;
 import gotogoal.rest.jsonSerializer.user.UserResourceMixIn;
+import gotogoal.rest.jsonSerializer.workout.ExerciseMixIn;
+import gotogoal.rest.jsonSerializer.workout.ExerciseResourceMixIn;
+import gotogoal.rest.jsonSerializer.workout.WorkoutDayMixIn;
+import gotogoal.rest.jsonSerializer.workout.WorkoutDayResourceMixIn;
+import gotogoal.rest.jsonSerializer.workout.WorkoutMixIn;
+import gotogoal.rest.jsonSerializer.workout.WorkoutResourceMixIn;
 import gotogoal.rest.resource.nutrition.FoodProductResource;
 import gotogoal.rest.resource.nutrition.NutritionDayResource;
 import gotogoal.rest.resource.nutrition.MealResource;
 import gotogoal.rest.resource.user.UserResource;
+import gotogoal.rest.resource.workout.ExerciseResource;
+import gotogoal.rest.resource.workout.WorkoutDayResource;
+import gotogoal.rest.resource.workout.WorkoutResource;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -64,6 +76,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         builder.mixIn(MealResource.class, MealResourceMixIn.class);
         builder.mixIn(User.class, UserMixIn.class);
         builder.mixIn(UserResource.class, UserResourceMixIn.class);
+        builder.mixIn(Workout.class, WorkoutMixIn.class);
+        builder.mixIn(WorkoutResource.class, WorkoutResourceMixIn.class);
+        builder.mixIn(WorkoutDay.class, WorkoutDayMixIn.class);
+        builder.mixIn(WorkoutDayResource.class, WorkoutDayResourceMixIn.class);
+        builder.mixIn(ExerciseResource.class, ExerciseResourceMixIn.class);
+        builder.mixIn(Exercise.class, ExerciseMixIn.class);
         return builder;
     }
 

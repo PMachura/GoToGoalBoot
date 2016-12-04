@@ -1,16 +1,15 @@
 <div ng-controller="nutritionController" class="row center-block">
     <div class="row center-block ">
-        <div class="col-md-8">
+        <div class="container" ng-if="displayMode.view">
             <ng-include src="'/templates/nutrition/nutritionDaysList.html'" />  
         </div>
     </div>
     <div class="row center-block">
-        <div class="col-md-8">
+        <div class="container" ng-if="displayMode.creation">
             <ng-include src="'/templates/nutrition/currentNutritionDay.html'" />
         </div>
     </div>
     <div>
-        {{test.nutritionDay}}
     </div>
 </div>
 

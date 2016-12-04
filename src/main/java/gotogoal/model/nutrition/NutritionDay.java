@@ -48,8 +48,17 @@ public class NutritionDay {
 
     @ManyToOne
     private User user;
+    
+    private String note;
 
+    public String getNote() {
+        return note;
+    }
 
+    public void setNote(String note) {
+        this.note = note;
+    }
+    
     public Long getId() {
         return id;
     }

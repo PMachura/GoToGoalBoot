@@ -7,19 +7,26 @@ and open the template in the editor.
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2>
-            Dziennik żywieniowy {{currentNutritionDay.content.date | date: "yyyy-MM-dd"}}
+            Dziennik żywieniowy {{currentNutritionDay.content.date| date: "yyyy-MM-dd"}}
         </h2>
 
     </div>
     <div class="panel-body"> 
-        <div class="input-group">
-            <span class="input-group-addon">Date</span>
-            <input type="date" class="form-control" aria-describedby="basic-addon" placeholder="rrrr-MM-dd" ng-model="currentNutritionDay.content.date" />
-        </div>
-
-        <div class="clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
-            <ng-include src="'/templates/nutrition/mealInCurrentNutritionDay.html'" />
-        </div>       
+        <form name="nutritionDayForm" novalidate>
+            <div class="input-group">
+                <span class="input-group-addon">Date</span>
+                <input class="form-control input-lg" aria-describedby="basic-addon" placeholder="rrrr-MM-dd" 
+                       type="text" required ng-pattern="datePattern"  name="nutritionDayDate" ng-model="currentNutritionDay.content.date" />
+            </div>   
+            <hr/>
+            <div class="clearfix" ng-repeat="meal in currentNutritionDay.content.meals">
+                <ng-include src="'/templates/nutrition/mealInCurrentNutritionDay.html'" />
+            </div> 
+            <div class="form-group">
+                <label for="note">Notatka</label>
+                <textarea class="form-control" id="note" ng-model="currentNutritionDay.content.note"></textarea>
+            </div>
+        </form>
     </div>
     <div class="panel-footer  clearfix ">
         <h4>  
@@ -40,10 +47,13 @@ and open the template in the editor.
             {{currentNutritionDay.content.macronutrients.fats.calories.amount| number:1}} 
             ({{currentNutritionDay.content.macronutrients.fats.calories.percentage| number:1}}%) kcal
         </h4>
-        <button class="btn-lg btn-primary pull-right" ng-click="saveCurrentNutritionDay(currentNutritionDay)">
+        <button class=" btn btn-lg btn-primary pull-right" ng-disabled="nutritionDayForm.$invalid" ng-click="saveCurrentNutritionDay(currentNutritionDay)">
             Zapisz dziennik
         </button>
-        <button  class="btn-lg btn-primary pull-right" ng-click="addEmptyMealToNutritionDay(currentNutritionDay.content)">
+        <button class=" btn btn-lg btn-primary pull-right" ng-click="cancelNutritionDayCreation(currentNutritionDay)">
+            Anuluj
+        </button>
+        <button  class="btn btn-lg btn-primary pull-left" ng-click="addEmptyMealToNutritionDay(currentNutritionDay.content)">
             Dodaj posiłek
         </button>
 
